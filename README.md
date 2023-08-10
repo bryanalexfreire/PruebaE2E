@@ -53,6 +53,10 @@ This project was generated with Patron Automation Test - Screenplay, Serenity bd
 
 5. Additional Information: ➕
    - You can get dependencies and plugins for gradle from here: https://acortar.link/YqzCDP
+   - In this repository there is a folder with conclusions.txt
+
+     ![image](https://github.com/bryanalexfreire/PruebaE2E/assets/30132840/914cfc52-49bb-4573-b965-2645a8213793)
+
 
 AUTOR 📍
 @BryanFreire
