@@ -5,7 +5,7 @@ This project was generated with Patron Automation Test - Screenplay, Serenity bd
    -  Local Machine with OS Windows 10
    -  IDE IntelliJ version 2023.1.2
    -  Gradle version 7.6.1 (must be installed and added in environment variable)
-   -  JDK version 17 (must be installed and  added in environment variable)
+   -  Java SE - JDK version 17 (must be installed and  added in environment variable)
 
 3. Instructions for running the tests: ✔️
    - Open IntelliJ
