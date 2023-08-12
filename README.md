@@ -11,7 +11,7 @@ This project was generated with Patron Automation Test - Screenplay, Serenity bd
    - Open IntelliJ
    - Open project
    - Select project
-   - Wait to download files (in the bottom bar, Files are downloading)
+   - Wait to download files (in the bottom bar, there is a status bar where we can see the porcent of download of files are downloading)
    
    **** EJECUTE TEST ****
 
@@ -20,16 +20,14 @@ This project was generated with Patron Automation Test - Screenplay, Serenity bd
      ![image](https://github.com/bryanalexfreire/PruebaE2E/assets/30132840/a92a750f-a523-4802-8115-4356b82cb090)
 
    - Click on right mouse button on page body
-   - 
+     
      ![image](https://github.com/bryanalexfreire/PruebaE2E/assets/30132840/c1f2a5a0-9980-4322-a658-6be6f76c72c2)
 
    - Click on "Run RunnerTest"
   
    - Or Open terminal and enter ./gradle clean test
-   - 
+     
      ![image](https://github.com/bryanalexfreire/PruebaE2E/assets/30132840/b4482ea6-87fb-4d25-9bf7-c0b9fc809e86)
-
-   - 
      
    **** VIEW REPORTS ****
    
