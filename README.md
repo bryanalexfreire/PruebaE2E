@@ -7,7 +7,7 @@ This project was generated with Patron Automation Test - Screenplay, Serenity bd
    -  Gradle version 7.6.1 (must be installed and added in environment variable)
    -  Java SE - JDK version 17 (must be installed and  added in environment variable)
 
-3. Instructions for running the tests: ✔️s
+3. Instructions for running the tests: ✔️
    - Open IntelliJ
    - Open project
    - Select project
@@ -17,17 +17,20 @@ This project was generated with Patron Automation Test - Screenplay, Serenity bd
 
    - Open file RunnerTest.java
      
-     ![image](https://github.com/bryanalexfreire/PruebaE2E/assets/30132840/a92a750f-a523-4802-8115-4356b82cb090)
+     ![imagen](https://github.com/user-attachments/assets/47f06028-60b3-4743-9e8c-4db74ab7f170)
+
 
    - Click on right mouse button on page body
      
-     ![image](https://github.com/bryanalexfreire/PruebaE2E/assets/30132840/c1f2a5a0-9980-4322-a658-6be6f76c72c2)
+     ![imagen](https://github.com/user-attachments/assets/d04765ff-9d88-4195-819d-82a07b4d044c)
+
 
    - Click on "Run RunnerTest"
   
    - Or Open terminal and enter ./gradle clean test
      
-     ![image](https://github.com/bryanalexfreire/PruebaE2E/assets/30132840/b4482ea6-87fb-4d25-9bf7-c0b9fc809e86)
+     ![imagen](https://github.com/user-attachments/assets/32970be2-faee-4030-bcbe-eb406c36f9eb)
+
      
    **** VIEW REPORTS ****
    
