@@ -37,26 +37,30 @@ This project was generated with Patron Automation Test - Screenplay, Serenity bd
    - View file on project files called "build"
    - Click on "build"
      
-     ![image](https://github.com/bryanalexfreire/PruebaE2E/assets/30132840/fd85f243-3593-43c3-8c06-3ae8db2ec379)
+     ![imagen](https://github.com/user-attachments/assets/2cad1c37-1f47-4061-a530-99b7ffe81ba7)
+
 
    - Click on "reports"
      
-     ![image](https://github.com/bryanalexfreire/PruebaE2E/assets/30132840/694cb02f-d142-44a5-9e63-a52c1788a727)
+     ![imagen](https://github.com/user-attachments/assets/2b09347f-af82-45d0-9bc6-5791899354c5)
+
 
    - Double click on "index.html"
      
-     ![image](https://github.com/bryanalexfreire/PruebaE2E/assets/30132840/ed915ccf-d9a6-4409-b0fb-efbbce559eb9)
+     ![imagen](https://github.com/user-attachments/assets/01cdd2db-745a-4c8f-bac2-3312fe906739)
+
      
    - Select Browser to open file
      
-     ![image](https://github.com/bryanalexfreire/PruebaE2E/assets/30132840/0a9dd6bc-3177-4102-8732-558c70c8aaa8)
+     ![imagen](https://github.com/user-attachments/assets/67cb3f97-2f15-449e-8f6f-c01d5b878162)
 
 
 5. Additional Information: ➕
    - You can get dependencies and plugins for gradle from here: https://acortar.link/YqzCDP
    - In this repository there is a folder with conclusions.txt
 
-     ![image](https://github.com/bryanalexfreire/PruebaE2E/assets/30132840/914cfc52-49bb-4573-b965-2645a8213793)
+     ![imagen](https://github.com/user-attachments/assets/721069a4-3a2c-4a3c-a1b7-fcee8ddd279f)
+
 
 
 AUTOR 📍
