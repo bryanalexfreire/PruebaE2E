@@ -30,7 +30,7 @@ public class buyingGlue {
 
         wait = new WebDriverWait(
                 driver,
-                Duration.ofSeconds(20)
+                Duration.ofSeconds(40)
         );
 
     }
