@@ -7,7 +7,7 @@ This project was generated with Patron Automation Test - Screenplay, Serenity bd
    -  Gradle version 7.6.1 (must be installed and added in environment variable)
    -  Java SE - JDK version 17 (must be installed and  added in environment variable)
 
-3. Instructions for running the tests: ✔️
+3. Instructions for running the tests: ✔️s
    - Open IntelliJ
    - Open project
    - Select project
