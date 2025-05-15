@@ -1,0 +1,26 @@
+Hallazgos y Conclusiones del Ejercicio de Automatización Web con Intellij IDEA, Serenity BDD, Gherkin, 
+Cucumber y Patrón de Diseño Screenplay
+
+En el proceso de realizar el ejercicio de automatización web utilizando las herramientas 
+Intellij IDEA, Serenity BDD, Gherkin, Cucumber y el patrón de diseño Screenplay, se han obtenido 
+varios hallazgos significativos que destacan la eficacia y las ventajas de esta combinación de tecnologías.
+
+En primer lugar, la elección de Intellij IDEA como entorno de desarrollo demostró ser acertada. 
+Su interfaz intuitiva y las funciones de autocompletado agilizaron el proceso de escritura de código y 
+mejoraron la productividad. La integración de Gherkin, un lenguaje de especificación, permite una
+comunicación más clara entre los miembros del equipo de desarrollo y los no técnicos.
+
+La adopción de Cucumber como herramienta de ejecución de pruebas basadas en las especificaciones de Gherkin demostró 
+ser una elección acertada. La capacidad de definir escenarios de prueba en lenguaje natural y luego convertirlos en casos 
+de prueba automatizados simplificó la comprensión de los requisitos y aceleró el proceso de implementación.
+
+La implementación del patrón de diseño Screenplay resultó ser altamente beneficioso en términos de mantenibilidad y 
+escalabilidad. La separación de responsabilidades en interacciones, tareas y preguntas permitió un código más modular y 
+reutilizable. Esto no solo facilitó la incorporación de nuevos miembros al equipo, sino que también redujo la duplicación 
+de código y mejoró la claridad de la estructura general del proyecto.
+
+En conclusión, la combinación de Intellij IDEA, Serenity BDD, Gherkin, Cucumber y el patrón de diseño Screenplay 
+proporcionó un enfoque integral y efectivo para la automatización de pruebas web. La comunicación mejorada, la ejecución 
+eficiente de pruebas basadas en especificaciones y la estructura modular del código contribuyeron en gran medida al éxito 
+del ejercicio. Estas herramientas y prácticas son altamente recomendables para futuros proyectos de automatización de 
+pruebas en entornos web.
