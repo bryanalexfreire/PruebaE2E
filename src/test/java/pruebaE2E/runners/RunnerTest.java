@@ -7,10 +7,11 @@ import org.junit.runner.RunWith;
 
 @RunWith(CucumberWithSerenity.class)
 @CucumberOptions(
-        features = "src/test/resources/features/onlineShop.feature",
-        glue = "pruebaE2E.glue",
+        features = "src/test/resources/features",
+        glue = {"pruebaE2E.glue", "pruebaE2E.hooks"},
         snippets = CucumberOptions.SnippetType.CAMELCASE,
         tags = "@BuyDevicesHP"
 )
 public class RunnerTest {
 }
+

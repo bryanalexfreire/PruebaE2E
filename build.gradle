@@ -1,7 +1,9 @@
 plugins {
     id 'java'
 }
-
+java {
+    sourceCompatibility = '21'
+}
 repositories {
     maven{
         url 'https://repo.maven.apache.org/maven2'

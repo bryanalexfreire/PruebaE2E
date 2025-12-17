@@ -14,11 +14,6 @@ public class Hooks {
         return OnStage.theActorCalled(actorName);
     }
 
-    @Before
-    public void setTheStage() {
-        OnStage.setTheStage(new OnlineCast());
-    }
-
     @After
     public void draw_the_curtain() {
         OnStage.drawTheCurtain();
