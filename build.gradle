@@ -8,20 +8,20 @@ repositories {
     }
 }
 ext {
-    serenity_version = '3.9.8'
+    serenity_version = '4.1.14'
     }
 
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
-    implementation group: 'net.serenity-bdd', name: 'serenity-core', version: '3.6.23'
-    implementation group: 'net.serenity-bdd', name: 'serenity-junit', version: '3.6.23'
-    testImplementation group: 'net.serenity-bdd', name: 'serenity-cucumber', version: '3.6.23'
-    implementation group: 'net.serenity-bdd', name: 'serenity-screenplay-webdriver', version: '3.6.23'
+    implementation group: 'net.serenity-bdd', name: 'serenity-core', version: serenity_version
+    implementation group: 'net.serenity-bdd', name: 'serenity-junit', version: serenity_version
+    testImplementation group: 'net.serenity-bdd', name: 'serenity-cucumber', version: serenity_version
+    implementation group: 'net.serenity-bdd', name: 'serenity-screenplay-webdriver', version: serenity_version
     testImplementation group: 'junit', name: 'junit', version: '4.13.2'
-    implementation group: 'net.serenity-bdd', name: 'serenity-screenplay', version: '3.6.23'
+    implementation group: 'net.serenity-bdd', name: 'serenity-screenplay', version: serenity_version
     implementation group: 'org.apache.maven.plugins', name: 'maven-compiler-plugin', version: '3.11.0'
-    implementation group: 'net.serenity-bdd.maven.plugins', name: 'serenity-maven-plugin', version: '3.6.23'
+    implementation group: 'net.serenity-bdd.maven.plugins', name: 'serenity-maven-plugin', version: serenity_version
     implementation 'org.seleniumhq.selenium:selenium-java:3.141.59'
     implementation 'net.masterthought:cucumber-reporting:5.3.0'
     implementation "net.andreinc:mockneat:0.4.8"
