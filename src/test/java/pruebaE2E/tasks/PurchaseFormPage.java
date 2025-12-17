@@ -17,7 +17,7 @@ public class PurchaseFormPage {
 
     public static Performable withData(PurchaseData data){
         return Task.where("Fill purchase form and complete purchase",
-                WaitUntil.the(CartUI.PLACE_ORDER, WebElementStateMatchers.isEnabled()).forNoMoreThan(10).seconds(),
+                WaitUntil.the(CartUI.PLACE_ORDER, WebElementStateMatchers.isEnabled()).forNoMoreThan(2).seconds(),
                 SafeClick.on(CartUI.PLACE_ORDER),
                 Enter.theValue(data.getName()).into(CartUI.NAME),
                 Enter.theValue(data.getCountry()).into(CartUI.COUNTRY),
@@ -26,7 +26,7 @@ public class PurchaseFormPage {
                 Enter.theValue(data.getMonth()).into(CartUI.MONTH),
                 Enter.theValue(data.getYear()).into(CartUI.YEAR),
                 SafeClick.on(CartUI.PURCHASE_BUTTON),
-                // validar que la confirmación de compra contiene el texto esperado y cerrar rápido
+                // validate that the purchase confirmation contains the expected text and close quickly
                 WaitUntil.the(CartUI.PURCHASE_CONFIRMATION, WebElementStateMatchers.containsText("Thank you for your purchase")).forNoMoreThan(2).seconds(),
                 SafeClick.on(CartUI.CLOSE_BUTTON)
         );

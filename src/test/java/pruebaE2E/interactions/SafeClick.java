@@ -31,8 +31,8 @@ public class SafeClick implements Interaction {
     @Override
     public <T extends Actor> void performAs(T actor) {
         WebDriver driver = BrowseTheWeb.as(actor).getDriver();
-        // reducir timeout para acelerar fallos y reintentos tras la confirmación de compra
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+        // reduce timeout to speed up failures and retries after purchase confirmation
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(2));
 
         // clear any existing alert before interacting
         try {

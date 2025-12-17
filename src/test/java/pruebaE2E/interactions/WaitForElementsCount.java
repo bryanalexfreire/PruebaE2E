@@ -25,7 +25,7 @@ public class WaitForElementsCount implements Interaction {
     }
 
     public static WaitForElementsCount atLeast(Target target, int minCount) {
-        return new WaitForElementsCount(target, minCount, Duration.ofSeconds(30));
+        return new WaitForElementsCount(target, minCount, Duration.ofSeconds(2));
     }
 
     public static WaitForElementsCount atLeast(Target target, int minCount, Duration timeout) {

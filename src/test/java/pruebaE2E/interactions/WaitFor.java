@@ -23,6 +23,14 @@ public class WaitFor implements Interaction {
         this.waitForVisibility = waitForVisibility;
     }
 
+    public static WaitFor invisibilityOf(Target target) {
+        return new WaitFor(target, Duration.ofSeconds(2), false);
+    }
+
+    public static WaitFor invisibilityOf(Target target, Duration timeout) {
+        return new WaitFor(target, timeout, false);
+    }
+
     public static WaitFor visibilityOf(Target target) {
         return new WaitFor(target, Duration.ofSeconds(2), true);
     }
@@ -39,4 +47,3 @@ public class WaitFor implements Interaction {
         }
     }
 }
-

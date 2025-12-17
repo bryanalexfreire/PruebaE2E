@@ -12,7 +12,7 @@ public class GoCartPage {
 
     public static Performable goCartPage(){
         return Task.where("Go to cart page",
-                WaitUntil.the(HomePageUI.CART_LINK, WebElementStateMatchers.isEnabled()).forNoMoreThan(10).seconds(),
+                WaitUntil.the(HomePageUI.CART_LINK, WebElementStateMatchers.isEnabled()).forNoMoreThan(2).seconds(),
                 SafeClick.on(CartUI.CART_LINK)
         );
     }

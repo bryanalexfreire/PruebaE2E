@@ -1,26 +1,31 @@
-Hallazgos y Conclusiones del Ejercicio de Automatización Web con Intellij IDEA, Serenity BDD, Gherkin, 
-Cucumber y Patrón de Diseño Screenplay
+Findings and Conclusions from the Web Automation Exercise with IntelliJ IDEA, Serenity BDD, Gherkin, Cucumber and the Screenplay Pattern
 
-En el proceso de realizar el ejercicio de automatización web utilizando las herramientas 
-Intellij IDEA, Serenity BDD, Gherkin, Cucumber y el patrón de diseño Screenplay, se han obtenido 
-varios hallazgos significativos que destacan la eficacia y las ventajas de esta combinación de tecnologías.
+Findings
+- The combination of IntelliJ IDEA, Serenity BDD, Cucumber and the Screenplay pattern supports a modular, maintainable automation architecture.
+- IntelliJ IDEA provides helpful IDE features (autocomplete, navigation, refactoring) that speed up development and reduce errors.
+- Gherkin feature files and Cucumber step definitions improve communication between technical and non-technical team members.
+- The Screenplay pattern (tasks, interactions, questions) enables clear separation of concerns and encourages reusable components.
+- Test stability depends on driver/browser version compatibility and reliable element locators; flaky locators or mismatched WebDriver versions were the main instability sources.
+- Default timeouts were long in several places; unifying short explicit waits (2 seconds) for quick checks reduced unnecessary delays but may require adjustment for less stable environments.
 
-En primer lugar, la elección de Intellij IDEA como entorno de desarrollo demostró ser acertada. 
-Su interfaz intuitiva y las funciones de autocompletado agilizaron el proceso de escritura de código y 
-mejoraron la productividad. La integración de Gherkin, un lenguaje de especificación, permite una
-comunicación más clara entre los miembros del equipo de desarrollo y los no técnicos.
+Conclusions
+- The selected stack is appropriate for scalable acceptance and E2E tests: it facilitates readable specifications and maintainable automation code.
+- Adopting the Screenplay pattern improved modularity and reusability, making it easier to extend tests and onboard new team members.
+- Ensuring environment parity (browser and WebDriver versions) and robust locators is critical to achieving stable CI runs.
 
-La adopción de Cucumber como herramienta de ejecución de pruebas basadas en las especificaciones de Gherkin demostró 
-ser una elección acertada. La capacidad de definir escenarios de prueba en lenguaje natural y luego convertirlos en casos 
-de prueba automatizados simplificó la comprensión de los requisitos y aceleró el proceso de implementación.
+Recommendations
+- Use matching browser driver versions for the target browser (Chrome or Edge) on local and CI agents. Prefer the official driver downloads:
+  - ChromeDriver: https://chromedriver.chromium.org/downloads
+  - EdgeDriver: https://developer.microsoft.com/es-es/microsoft-edge/tools/webdriver?form=MA13LH
+- Keep short explicit waits for quick UI checks (2 seconds) and increase only when needed for specific unstable interactions.
+- Centralize timeout values in a configuration file to avoid scattered “magic numbers” in code.
+- Improve locator resilience: prefer stable attributes (data-test-id, ids) or robust XPath/CSS expressions.
+- Add CI pipeline validation that verifies driver/browser compatibility before running the full test suite.
 
-La implementación del patrón de diseño Screenplay resultó ser altamente beneficioso en términos de mantenibilidad y 
-escalabilidad. La separación de responsabilidades en interacciones, tareas y preguntas permitió un código más modular y 
-reutilizable. Esto no solo facilitó la incorporación de nuevos miembros al equipo, sino que también redujo la duplicación 
-de código y mejoró la claridad de la estructura general del proyecto.
+Next steps
+- Create a configuration file or constants class to manage timeouts and driver settings.
+- Replace any remaining Spanish comments and messages with English for consistency across the codebase.
+- Add a lightweight smoke test that runs quickly on CI to catch environment issues early.
 
-En conclusión, la combinación de Intellij IDEA, Serenity BDD, Gherkin, Cucumber y el patrón de diseño Screenplay 
-proporcionó un enfoque integral y efectivo para la automatización de pruebas web. La comunicación mejorada, la ejecución 
-eficiente de pruebas basadas en especificaciones y la estructura modular del código contribuyeron en gran medida al éxito 
-del ejercicio. Estas herramientas y prácticas son altamente recomendables para futuros proyectos de automatización de 
-pruebas en entornos web.
+Author
+- Bryan Freire

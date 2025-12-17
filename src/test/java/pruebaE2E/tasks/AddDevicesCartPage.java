@@ -15,7 +15,7 @@ public class AddDevicesCartPage {
 
     public static Performable addDevicesCartPage(){
         return Task.where("Add two products to cart",
-                WaitUntil.the(HomePageUI.FIRST_PRODUCT, WebElementStateMatchers.isEnabled()).forNoMoreThan(10).seconds(),
+                WaitUntil.the(HomePageUI.FIRST_PRODUCT, WebElementStateMatchers.isEnabled()).forNoMoreThan(2).seconds(),
                 SafeClick.on(HomePageUI.FIRST_PRODUCT),
                 SafeClick.on(ProductUI.ADD_TO_CART),
                 AcceptAlert.now(),
