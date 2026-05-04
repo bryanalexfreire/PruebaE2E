@@ -1,43 +1,95 @@
 plugins {
     id 'java'
+    id 'net.serenity-bdd.serenity-gradle-plugin' version '4.1.14'
 }
+
+// Set the Java source compatibility version
 java {
     sourceCompatibility = '21'
 }
+
+// Define the repositories to be used for dependency resolution
 repositories {
-    maven{
+    maven {
         url 'https://repo.maven.apache.org/maven2'
     }
 }
+
+// Define extra properties
 ext {
     serenity_version = '4.1.14'
-    }
+}
 
+// Define the project dependencies
 dependencies {
-    testImplementation platform('org.junit:junit-bom:5.9.1')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-    implementation group: 'net.serenity-bdd', name: 'serenity-core', version: serenity_version
-    implementation group: 'net.serenity-bdd', name: 'serenity-junit', version: serenity_version
-    testImplementation group: 'net.serenity-bdd', name: 'serenity-cucumber', version: serenity_version
+    // Core Serenity BDD libraries
+    implementation group: 'net.serenity-bdd', name: 'serenity-core',                version: serenity_version
+    implementation group: 'net.serenity-bdd', name: 'serenity-junit',               version: serenity_version
+    implementation group: 'net.serenity-bdd', name: 'serenity-cucumber',            version: serenity_version
     implementation group: 'net.serenity-bdd', name: 'serenity-screenplay-webdriver', version: serenity_version
-    testImplementation group: 'junit', name: 'junit', version: '4.13.2'
-    implementation group: 'net.serenity-bdd', name: 'serenity-screenplay', version: serenity_version
-    implementation group: 'org.apache.maven.plugins', name: 'maven-compiler-plugin', version: '3.11.0'
-    implementation group: 'net.serenity-bdd.maven.plugins', name: 'serenity-maven-plugin', version: serenity_version
-    implementation 'org.seleniumhq.selenium:selenium-java:3.141.59'
-    implementation 'net.masterthought:cucumber-reporting:5.3.0'
-    implementation "net.andreinc:mockneat:0.4.8"
+    implementation group: 'net.serenity-bdd', name: 'serenity-screenplay',          version: serenity_version
+
+    // Test runner
+    implementation group: 'junit', name: 'junit', version: '4.13.2'
+
+    // Excel support for DDT (Data-Driven Testing)
+    implementation 'org.apache.poi:poi-ooxml:5.2.5'
+
+    // String utilities used by ExcelReader
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+}
+
+// Reads the Excel file and writes the real test rows into the Examples block
+// of every feature file that contains an @externaldata descriptor.
+tasks.register('prepareExternalDataFeatures', JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.screenplay.project.util.overwritedata.FeatureOverwriteCli'
+    args 'prepare'
+}
+
+// Restores the original @externaldata descriptor after the test run,
+// so the feature files stay clean in version control.
+tasks.register('restoreExternalDataFeatures', JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.screenplay.project.util.overwritedata.FeatureOverwriteCli'
+    args 'restore'
 }
 
 test {
-    systemProperty "file.encoding", "utf-8"
-}
+    // Always prepare external data before running and restore + aggregate afterwards
+    dependsOn tasks.named('prepareExternalDataFeatures')
+    finalizedBy tasks.named('restoreExternalDataFeatures'), tasks.named('aggregate')
 
-sourceSets{
-    test{
-        resources{
-            srcDir file('src/test/java')
-            exclude '**/*.java'
+    systemProperty "file.encoding", "utf-8"
+
+    // Browser selection: pass -Pbrowser=chrome|firefox|edge or set the BROWSER env variable
+    def browser = (project.findProperty("browser") ?: System.getenv("BROWSER") ?: 'firefox').toString().toLowerCase()
+    def effectiveDriver = (browser == 'safari') ? 'remote' : browser
+    systemProperty "webdriver.driver", effectiveDriver
+
+    // Use a bundled driver if a path is not supplied externally
+    def driverPath = project.findProperty("driverPath") ?: System.getenv("DRIVER_PATH")
+    if (!driverPath && browser == 'edge') {
+        def bundledEdgeDriver = file('drivers/edge/147/msedgedriver.exe')
+        if (bundledEdgeDriver.exists()) {
+            driverPath = bundledEdgeDriver.absolutePath
         }
+    }
+    if (driverPath) {
+        systemProperty "webdriver.${browser}.driver", driverPath
+    }
+
+    // Remote / Safari execution support
+    if (browser == 'safari' || browser == 'remote') {
+        def remoteUrl    = project.findProperty("remoteUrl")    ?: System.getenv("SELENIUM_REMOTE_URL") ?: "http://localhost:4444/wd/hub"
+        def remoteBrowser = project.findProperty("remoteBrowser") ?: System.getenv("REMOTE_BROWSER")    ?: (browser == 'safari' ? 'safari' : 'chrome')
+        systemProperty "webdriver.remote.url",    remoteUrl
+        systemProperty "webdriver.remote.driver", remoteBrowser
+    }
+
+    // Optional tag filter: -Ptags="@BuyDevicesHP_DDT" or CUCUMBER_TAGS env variable
+    def tags = project.findProperty("tags") ?: System.getenv("CUCUMBER_TAGS")
+    if (tags) {
+        systemProperty "cucumber.filter.tags", tags
     }
 }
