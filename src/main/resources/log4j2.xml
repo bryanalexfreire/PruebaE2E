@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration packages="com.screenplay.project">
+    <!-- Appenders: Define where logs go (file, console, etc.) -->
+    <Appenders>
+        <!-- Console appender for immediate feedback during test execution -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss} [%-5level] [%thread] %logger{36} - %msg%n"/>
+        </Console>
+
+        <!-- File appender for persistent test logs -->
+        <File name="TestLogFile" fileName="target/logs/test-execution.log">
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} [%-5level] %logger{36} - %msg%n"/>
+        </File>
+
+        <!-- Async appender for better performance in high-volume logging -->
+        <Async name="AsyncTestLog">
+            <AppenderRef ref="TestLogFile"/>
+        </Async>
+
+        <!-- Rolling file for metrics and performance data -->
+        <RollingFile name="MetricsFile" fileName="target/metrics/performance.log"
+                     filePattern="target/metrics/performance-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout pattern="%d{ISO8601} | %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="100MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+    </Appenders>
+
+    <!-- Loggers: Define what gets logged at what level -->
+    <Loggers>
+        <!-- Root logger: global configuration -->
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="AsyncTestLog"/>
+        </Root>
+
+        <!-- Application-specific loggers -->
+        <Logger name="com.screenplay.project" level="debug" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="AsyncTestLog"/>
+        </Logger>
+
+        <!-- Metrics logger -->
+        <Logger name="com.screenplay.project.util.metrics" level="info" additivity="false">
+            <AppenderRef ref="MetricsFile"/>
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <!-- Serenity BDD logs (verbose during debugging) -->
+        <Logger name="net.serenitybdd" level="warn"/>
+        <Logger name="org.openqa.selenium" level="warn"/>
+
+        <!-- Third-party libraries -->
+        <Logger name="org.apache.http" level="warn"/>
+        <Logger name="org.apache.poi" level="warn"/>
+    </Loggers>
+</Configuration>
+

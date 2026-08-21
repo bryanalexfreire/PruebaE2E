@@ -183,22 +183,546 @@ Set-Location "C:\Users\User\Desktop\DemonblazeE2E\PruebaE2E"
 | Serenity HTML (main) | `target/site/serenity/index.html` |
 | JUnit / Gradle | `build/reports/tests/test/index.html` |
 | Cucumber JSON | `build/cucumber-reports/json/cucumber.json` |
+| Screenshots | `target/site/serenity/screenshots/` |
+
+### How Reports are Generated
+
+Every test execution automatically:
+1. **Cleans old reports** — Removes outdated results
+2. **Prepares data** — Loads Excel test data
+3. **Executes tests** — Runs with Serenity + Cucumber
+4. **Captures evidence** — Screenshots on every step
+5. **Restores features** — Cleans up temporary data
+6. **Aggregates results** — Generates HTML reports
+
+**Key:** Old reports are deleted before each run to ensure fresh, up-to-date results.
+
+### Screenshot Evidence
+
+Every test step captures screenshots automatically:
+- **Success Screenshots** — Shows what passed
+- **Failure Screenshots** — Shows what failed and why
+- **Location:** `target/site/serenity/screenshots/`
+
+Screenshots are embedded in the Serenity HTML report. View them by opening:
+```powershell
+Start-Process "target\site\serenity\index.html"
+```
+
+**Configuration** (in `serenity.properties`):
+```ini
+serenity.take.screenshots=FOR_EACH_ACTION
+serenity.screenshots.take.failure=true
+serenity.screenshots.take.success=true
+webdriver.screenshot.dir=target/site/serenity/screenshots
+```
 
 ---
 
-## 7. Browser drivers
+## 6.1 Quick Reference — Common Commands
 
-All drivers are bundled under `drivers/`. Gradle picks them up automatically.
+### Execute Tests
 
-| Browser | Driver | Path |
-|---------|--------|------|
-| Edge    | msedgedriver 147 | `drivers/edge/147/msedgedriver.exe` |
-| Chrome  | chromedriver 147 | `drivers/chrome/147/extracted/chromedriver.exe` |
-| Firefox | geckodriver 150  | `drivers/firefox/150/extracted/geckodriver.exe` |
+```powershell
+# Run on Firefox (default)
+.\gradlew.bat clean test
+
+# Run on specific browser
+.\gradlew.bat clean test -Pbrowser=chrome
+.\gradlew.bat clean test -Pbrowser=edge
+
+# Run with tag filter
+.\gradlew.bat clean test -Pbrowser=firefox -Ptags="@BuyDevicesHP_DDT"
+
+# Run and open report
+.\scripts\run-and-report.ps1 -Browser firefox
+
+# Run all 3 browsers
+.\scripts\run-all-browsers.ps1
+```
+
+### Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| **Driver not found** | Run `.\gradlew.bat test --info` to see logs; Serenity will auto-download |
+| **Permission denied on drivers** | `Get-ChildItem drivers -Recurse -File \| % { Unblock-File $_.FullName }` |
+| **Gradle not found** | Verify you're in project root: `cd C:\Users\User\Desktop\DemonblazeE2E\PruebaE2E` |
+| **Java not found** | Verify JDK 21 PATH: `java -version` |
+| **Tests timeout** | Increase gradle memory: `$env:GRADLE_OPTS="-Xmx2048m"` |
+| **Port already in use** | Kill driver processes: `taskkill /F /IM chromedriver.exe` |
+
+---
+
+## 7. WebDriver Management — 3-Level Strategy
+
+The project implements an intelligent **3-level fallback strategy** for driver management:
+
+### How It Works
+
+```
+Level 1: Serenity Autodownload
+         (Downloads from internet if available)
+         ↓ (if fails or no internet)
+Level 2: System PATH
+         (Uses Chrome/Firefox/Edge installed globally)
+         ↓ (if not found)
+Level 3: Bundled Drivers
+         (Uses drivers in /drivers folder - ALWAYS EXISTS ✅)
+```
+
+### Available Drivers
+
+| Browser | Version | Bundled Path |
+|---------|---------|------|
+| Chrome  | 147 | `drivers/chrome/147/extracted/chromedriver.exe` |
+| Firefox | 150 | `drivers/firefox/150/extracted/geckodriver.exe` |
+| Edge    | 147 | `drivers/edge/147/msedgedriver.exe` |
+
+### Configuration
+
+**serenity.properties:**
+```ini
+webdriver.autodownload=true
+webdriver.driver=firefox
+webdriver.firefox.driver=drivers/firefox/150/extracted/geckodriver.exe
+webdriver.chrome.driver=drivers/chrome/147/extracted/chromedriver.exe
+webdriver.edge.driver=drivers/edge/147/msedgedriver.exe
+```
+
+**build.gradle:**
+```groovy
+test {
+    def browser = (project.findProperty("browser") ?: 'firefox').toString().toLowerCase()
+    systemProperty "webdriver.driver", browser
+
+    // Support custom driver path
+    def driverPath = project.findProperty("driverPath") ?: System.getenv("DRIVER_PATH")
+    if (driverPath) {
+        systemProperty "webdriver.${browser}.driver", driverPath
+    }
+}
+```
+
+### Troubleshooting Drivers
+
+| Issue | Solution |
+|-------|----------|
+| Driver not found | Run `.\gradlew.bat test --info` to see logs; Serenity auto-downloads |
+| Permission denied | `Get-ChildItem drivers -Recurse -File \| % { Unblock-File $_.FullName }` |
+| Custom driver path | `$env:DRIVER_PATH = "C:\path\to\driver.exe"` then run tests |
+| Port conflicts | `taskkill /F /IM chromedriver.exe; taskkill /F /IM geckodriver.exe` |
 
 ---
 
 ## 8. Prerequisites
 
-- **JDK 21** installed and available on `PATH`
-- Gradle does **not** need to be installed — the project uses `gradlew.bat`
+- **JDK 21** installed and available on `PATH` — Verify with `java -version`
+- **Gradle** — Not required, project uses `gradlew.bat`
+- **Internet** (recommended for first run) — Serenity downloads drivers automatically
+  - Fallback: Uses system-installed drivers or bundled drivers in `/drivers`
+
+### Quick Setup
+
+```powershell
+# Verify Java
+java -version
+
+# List bundled drivers
+Get-ChildItem drivers -Recurse -Filter "*.exe"
+
+# Run tests (auto-configures drivers)
+.\gradlew.bat clean test -Pbrowser=firefox
+```
+
+
+---
+
+## 9. Getting Started in 5 Minutes
+
+1. **Navigate to project**
+   ```powershell
+   cd "C:\Users\User\Desktop\DemonblazeE2E\PruebaE2E"
+   ```
+
+2. **Verify Java**
+   ```powershell
+   java -version  # Should show JDK 21.x
+   ```
+
+3. **Run tests**
+   ```powershell
+   # Option A: Run on Firefox (default)
+   .\gradlew.bat clean test
+
+   # Option B: Run on Chrome or Edge
+   .\gradlew.bat clean test -Pbrowser=chrome
+   .\gradlew.bat clean test -Pbrowser=edge
+
+   # Option C: Filter by tags
+   .\gradlew.bat clean test -Pbrowser=firefox -Ptags="@BuyDevicesHP_DDT"
+
+   # Option D: Use PowerShell script
+   .\scripts\run-and-report.ps1 -Browser firefox
+   ```
+
+4. **View Results**
+   - Serenity Report: `target/site/serenity/index.html` (includes all screenshots)
+   - Gradle Report: `build/reports/tests/test/index.html`
+   - Screenshots folder: `target/site/serenity/screenshots/` (PNG files)
+
+5. **Open Report Automatically**
+   ```powershell
+   .\scripts\run-and-report.ps1 -Browser firefox  # Opens report after tests complete
+   ```
+
+**Evidence Captured:**
+- ✅ Screenshots on every action (success and failure)
+- ✅ Step-by-step visual evidence in HTML report
+- ✅ Embedded in Serenity report for easy review
+
+---
+
+## 10. Screenshot Evidence & Reporting
+
+### How Screenshots Work
+
+The framework captures **visual evidence** automatically:
+
+| When | What | Where |
+|------|------|-------|
+| **Each Step** | Screenshot of action result | Embedded in report |
+| **On Failure** | Screenshot when test fails | Highlighted in report |
+| **On Success** | Screenshot when test passes | Embedded in report |
+
+### View Evidence
+
+1. **Run tests**
+   ```powershell
+   .\gradlew.bat clean test -Pbrowser=firefox
+   ```
+
+2. **Open Serenity Report** (contains all screenshots)
+   ```powershell
+   Start-Process "target\site\serenity\index.html"
+   ```
+
+3. **Screenshots location** (individual PNG files)
+   ```powershell
+   Get-ChildItem "target\site\serenity\screenshots" -Filter "*.png"
+   ```
+
+### Configuration
+
+**serenity.properties:**
+```ini
+serenity.take.screenshots=FOR_EACH_ACTION
+serenity.screenshots.take.failure=true
+serenity.screenshots.take.success=true
+webdriver.screenshot.dir=target/site/serenity/screenshots
+```
+
+**serenity.conf:**
+```
+serenity {
+  take.screenshots = "FOR_EACH_ACTION"
+  screenshots.take.failure = true
+  screenshots.take.success = true
+}
+```
+
+### What You'll See in Report
+
+✅ Each step shows:
+- Step name (Given/When/Then)
+- Step description
+- Screenshot of the action
+- Result (PASSED or FAILED)
+- Duration
+
+✅ Navigation panel shows:
+- Test scenario overview
+- Feature file reference
+- Test statistics
+- Screenshot gallery
+
+---
+
+## 11. CI/CD Integration
+
+```yaml
+# GitHub Actions example
+jobs:
+  e2e-tests:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          java-version: '21'
+      - run: .\gradlew.bat clean test -Pbrowser=firefox
+
+      # Upload screenshots and reports as artifacts
+      - if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: serenity-report
+          path: target/site/serenity/
+```
+
+The 3-level driver strategy ensures **tests always run**, whether you have Internet, system drivers, or only bundled drivers.
+
+---
+
+## 12. Summary
+
+✅ **Cross-Browser Testing** — Chrome, Firefox, Edge
+✅ **Data-Driven Testing** — Excel sheets with test data
+✅ **Enhanced Screenshots** — Visual evidence on every step (success + failure)
+✅ **3-Level Driver Strategy** — Autodownload → System PATH → Bundled
+✅ **Rich Reporting** — Serenity HTML with dashboard, charts, and traceability
+✅ **Production Ready** — CI/CD enabled with artifact uploads
+
+### Report Contents
+
+- 📊 Dashboard with statistics and charts
+- 📸 Screenshot gallery for every step
+- 📋 Feature-to-test traceability
+- 🏷️ Tag-based test breakdown
+- ⏱️ Execution timeline and metrics
+- 📁 Organized test artifacts
+
+---
+
+**Status:** Production Ready ✅
+**Last Updated:** 20 Aug 2026
+**Java:** JDK 21
+**Screenshots:** Enabled (FOR_EACH_ACTION) with compression
+**Reports:** Enhanced with dashboards and evidence
+
+---
+
+## 13. Where to Find Screenshot Evidence
+
+### After Running Tests
+
+```
+target/site/serenity/
+├── index.html                    ← Main report (open in browser) ⭐
+├── screenshots/
+│   ├── screenshot-001.png        ← Screenshot of step 1
+│   ├── screenshot-002.png        ← Screenshot of step 2
+│   ├── screenshot-003.png        ← Screenshot of step 3
+│   └── ... (more screenshots)
+├── css/
+├── js/
+├── requirements.html             ← Feature requirements mapping
+├── tagReport.html               ← Test tags breakdown
+└── screenshots.json              ← Metadata about screenshots
+```
+
+### How to View Enhanced Evidence
+
+**Option 1: Open Main Report (Recommended) ⭐**
+```powershell
+Start-Process "target\site\serenity\index.html"
+```
+**Features:**
+- Dashboard with test statistics
+- Pass/Fail charts and percentages
+- Screenshots embedded for each step
+- Timeline showing test execution
+- Feature requirements traceability
+- Link to detailed breakdown
+
+**Option 2: View Individual Screenshots**
+```powershell
+Get-ChildItem "target\site\serenity\screenshots" -Filter "*.png" |
+  ForEach-Object { Start-Process $_.FullName }
+```
+
+**Option 3: Automated Report Opening**
+```powershell
+.\scripts\run-and-report.ps1 -Browser firefox
+# Automatically opens report after tests complete
+```
+
+**Option 4: View Requirements Mapping**
+```powershell
+Start-Process "target\site\serenity\requirements.html"
+# Shows how tests map to features
+```
+
+### Enhanced Report Contents
+
+The Serenity report now includes:
+
+✅ **Dashboard**
+- Total tests executed
+- Pass/Fail rate (%)
+- Duration summary
+- Charts and statistics
+
+✅ **Detailed Steps**
+- Step name and description
+- Before/After screenshots
+- Execution time per step
+- Pass/Fail indicator
+
+✅ **Screenshots Gallery**
+- All screenshots organized
+- Click to view full size
+- Linked to specific steps
+
+✅ **Feature Mapping**
+- Requirements traceability
+- Feature file reference
+- Scenario status
+- Test coverage
+
+✅ **Test Execution Timeline**
+- When each test ran
+- Duration breakdown
+- Browser/OS information
+- Execution history
+
+### Report Configuration
+
+**Enhanced Settings** (in `serenity.properties`):
+```ini
+# Screenshots with compression
+serenity.take.screenshots=FOR_EACH_ACTION
+serenity.screenshots.take.failure=true
+serenity.screenshots.take.success=true
+serenity.compress.screenshots=true
+
+# Report details
+serenity.report.should.include.source=true
+serenity.consistency.level=RELAXED
+serenity.report.encoding=UTF-8
+
+# Display settings
+serenity.display.width=1920
+serenity.display.height=1080
+
+# Context
+serenity.milestone=Demoblaze E2E
+```
+
+### Exporting Report Evidence
+
+**Option A: Zip Entire Report**
+```powershell
+Compress-Archive -Path "target\site\serenity\" -DestinationPath "serenity-report.zip"
+```
+
+**Option B: Copy to Shared Location**
+```powershell
+Copy-Item "target\site\serenity\" -Destination "\\shared\reports\$(Get-Date -Format 'yyyy-MM-dd')" -Recurse
+```
+
+**Option C: Upload to Artifact Storage**
+```yaml
+# GitHub Actions
+- uses: actions/upload-artifact@v3
+  if: always()
+  with:
+    name: serenity-report-${{ matrix.browser }}
+    path: target/site/serenity/
+    retention-days: 30
+```
+
+---
+
+## 14. Troubleshooting Reports — Report Not Updated
+
+### Problem: Old Report Still Shows
+
+If the report shows old test results or screenshots, try these solutions:
+
+**Solution 1: Clean and Rebuild (Recommended)**
+```powershell
+# Full clean — removes all cached reports
+.\gradlew.bat clean test -Pbrowser=firefox
+
+# This automatically:
+# - Deletes old reports from target/ and build/
+# - Cleans cached screenshots
+# - Regenerates everything fresh
+# - Opens new report when done
+Start-Process "target\site\serenity\index.html"
+```
+
+**Solution 2: Manual Clean**
+```powershell
+# Delete old reports manually
+Remove-Item -Recurse -Force "target\site\serenity"
+Remove-Item -Recurse -Force "build\reports\tests"
+Remove-Item -Recurse -Force "build\cucumber-reports"
+
+# Then run tests
+.\gradlew.bat test -Pbrowser=firefox
+```
+
+**Solution 3: Hard Reset (Nuclear Option)**
+```powershell
+# Complete Gradle cache clean
+.\gradlew.bat clean
+
+# Run fresh
+.\gradlew.bat test -Pbrowser=firefox
+```
+
+### Why Reports Don't Update
+
+| Cause | Symptom | Fix |
+|-------|---------|-----|
+| Gradle cache | Old dates in report | `.\gradlew.bat clean test` |
+| Screenshots not regenerated | Missing recent screenshots | Check `serenity.take.screenshots=FOR_EACH_ACTION` |
+| Browser crashed | Incomplete report | Check logs, retry test |
+| Previous run still running | Port locked | `taskkill /F /IM java.exe` |
+| Permissions issue | Report not written | Run PowerShell as Admin |
+
+### Verify Fresh Report
+
+After running tests, confirm the report is fresh:
+
+```powershell
+# Check report timestamp (should be recent)
+(Get-Item "target\site\serenity\index.html").LastWriteTime
+
+# Expected: Current date/time
+
+# Check screenshot count
+(Get-ChildItem "target\site\serenity\screenshots" -Filter "*.png").Count
+
+# Expected: Should match number of test steps
+```
+
+### Report Generation Flow
+
+```
+1. .\gradlew.bat test -Pbrowser=firefox
+              ↓
+2. cleanReports task → Deletes old reports
+              ↓
+3. prepareExternalDataFeatures → Loads Excel data
+              ↓
+4. test task → Executes all scenarios
+              ↓
+5. Screenshots captured → FOR_EACH_ACTION
+              ↓
+6. restoreExternalDataFeatures → Cleanup
+              ↓
+7. aggregate → Generates fresh HTML report
+              ↓
+8. target/site/serenity/index.html ← FRESH REPORT ✅
+```
+
+### Best Practices
+
+✅ Always use `clean test` (not just `test`)
+✅ Check browser console for JavaScript errors
+✅ Verify internet connection for downloads
+✅ Use PowerShell Run as Administrator if permission issues
+✅ Close browser before running new tests
