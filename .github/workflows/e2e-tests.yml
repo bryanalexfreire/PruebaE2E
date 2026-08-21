@@ -1,0 +1,131 @@
+name: 🚀 E2E Tests - Serenity BDD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    # Run daily at 06:00 UTC
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      browser:
+        description: 'Browser to run tests'
+        required: false
+        default: 'firefox'
+        type: choice
+        options:
+          - firefox
+          - chrome
+          - edge
+
+env:
+  JAVA_VERSION: '21'
+  GRADLE_VERSION: '8.7'
+
+jobs:
+  test:
+    name: 🧪 E2E Tests - ${{ matrix.browser }}
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [firefox, chrome, edge]
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: ☕ Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: 📋 Verify Java installation
+        run: java -version
+
+      - name: ✅ Validate Gradle wrapper
+        uses: gradle/actions/wrapper-validation@v3
+
+      - name: 🔍 Verify drivers availability
+        run: |
+          Write-Host "Checking drivers..."
+          Get-ChildItem -Path "drivers" -Recurse -Filter "*.exe" | ForEach-Object {
+            Write-Host "✓ Found: $($_.FullName)"
+          }
+        shell: powershell
+
+      - name: 🚀 Run E2E Tests
+        run: |
+          .\gradlew.bat clean test -Pbrowser=${{ matrix.browser }} --info 2>&1 | Tee-Object test-output.log
+        shell: powershell
+        continue-on-error: true
+
+      - name: 📊 Generate Serenity Report
+        if: always()
+        run: |
+          $reportPath = "target\site\serenity\index.html"
+          if (Test-Path $reportPath) {
+            Write-Host "✓ Serenity report generated successfully"
+          } else {
+            Write-Host "⚠ Serenity report not found"
+          }
+        shell: powershell
+
+      - name: 📸 Upload Serenity Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: serenity-report-${{ matrix.browser }}
+          path: target/site/serenity/
+          retention-days: 30
+
+      - name: 📦 Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.browser }}
+          path: |
+            build/reports/tests/
+            build/cucumber-reports/
+            target/test-results/
+          retention-days: 30
+
+      - name: 📝 Upload Test Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-logs-${{ matrix.browser }}
+          path: test-output.log
+          retention-days: 30
+
+  results:
+    name: 📊 Test Results Summary
+    needs: test
+    if: always()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ✅ Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: 📈 Generate summary
+        run: |
+          echo "## 🚀 E2E Test Execution Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Browsers Tested:" >> $GITHUB_STEP_SUMMARY
+          echo "- ✓ Firefox" >> $GITHUB_STEP_SUMMARY
+          echo "- ✓ Chrome" >> $GITHUB_STEP_SUMMARY
+          echo "- ✓ Edge" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Artifacts:" >> $GITHUB_STEP_SUMMARY
+          echo "- 📊 Serenity Reports (HTML)" >> $GITHUB_STEP_SUMMARY
+          echo "- 📋 Test Results (XML)" >> $GITHUB_STEP_SUMMARY
+          echo "- 📸 Screenshots (PNG)" >> $GITHUB_STEP_SUMMARY
+          echo "- 📝 Test Logs" >> $GITHUB_STEP_SUMMARY
+

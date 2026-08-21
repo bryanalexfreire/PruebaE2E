@@ -11,7 +11,7 @@ import org.openqa.selenium.By;
 public final class PageMain {
     public static final String URL = "https://www.demoblaze.com/";
 
-    public static final Target BTN_LOGIN = Target.the("login button").located(By.id("login2s"));
+    public static final Target BTN_LOGIN = Target.the("login button").located(By.id("login2"));
     public static final Target INPUT_USERNAME = Target.the("login username").located(By.id("loginusername"));
     public static final Target INPUT_PASSWORD = Target.the("login password").located(By.id("loginpassword"));
     public static final Target BTN_LOGIN_SUBMIT = Target.the("login submit").located(By.xpath("//button[text()='Log in']"));

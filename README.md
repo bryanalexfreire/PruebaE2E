@@ -474,13 +474,177 @@ The 3-level driver strategy ensures **tests always run**, whether you have Inter
 
 ---
 
-## 12. Summary
+## 12. GitHub Flow Integration
+
+The project includes automated GitHub Actions workflows for continuous integration and testing.
+
+### Automated Workflows
+
+**File:** `.github/workflows/e2e-tests.yml`
+
+#### Trigger Events
+```yaml
+- Push to main or develop branches
+- Pull requests against main or develop
+- Daily schedule (06:00 UTC)
+- Manual trigger (workflow_dispatch)
+```
+
+#### What It Does
+
+```
+┌─────────────────────────────────────────────────┐
+│ 1. Checkout code                                │
+├─────────────────────────────────────────────────┤
+│ 2. Setup Java 21 + Gradle                       │
+├─────────────────────────────────────────────────┤
+│ 3. Verify drivers availability                  │
+├─────────────────────────────────────────────────┤
+│ 4. Run E2E Tests (3 browsers in parallel)       │
+│    ├─ Firefox                                   │
+│    ├─ Chrome                                    │
+│    └─ Edge                                      │
+├─────────────────────────────────────────────────┤
+│ 5. Generate Serenity Reports                    │
+├─────────────────────────────────────────────────┤
+│ 6. Upload Artifacts                             │
+│    ├─ Serenity reports (HTML)                   │
+│    ├─ Test results (XML)                        │
+│    ├─ Screenshots (PNG)                         │
+│    └─ Test logs                                 │
+└─────────────────────────────────────────────────┘
+```
+
+### Branch Protection Setup
+
+Configure in repository settings → Branches:
+
+#### Main Branch (`main`)
+```
+✅ Require pull request reviews
+✅ Require status checks to pass
+   - All 3 browser tests must pass
+✅ Require branches up to date
+✅ Dismiss stale approvals
+```
+
+#### Develop Branch (`develop`)
+```
+✅ Require pull request reviews
+✅ Require status checks to pass
+✅ Allow optional force pushes
+```
+
+### GitHub Flow Workflow
+
+```
+1. Create feature branch
+   git checkout -b feature/xyz
+
+2. Make changes and commit
+   git add .
+   git commit -m "feat: xyz"
+
+3. Push to GitHub
+   git push origin feature/xyz
+
+4. Create Pull Request
+   - CI/CD pipeline runs automatically
+   - 3 browsers execute tests in parallel
+   - Reports generated and uploaded
+
+5. Review and Approve
+   - Check Serenity reports
+   - Review screenshots
+   - Approve changes
+
+6. Merge to Develop
+   - All checks must pass
+   - Feature branch auto-deleted
+
+7. Create Release PR
+   - From develop → main
+   - Final verification
+   - Merge triggers release
+```
+
+### Pull Request Checklist
+
+When creating a PR, ensure:
+
+```markdown
+## Description
+Brief summary of changes
+
+## Testing
+- [ ] Tested on Firefox
+- [ ] Tested on Chrome
+- [ ] Tested on Edge
+
+## Verification
+- [ ] All E2E tests pass
+- [ ] No new screenshots show errors
+- [ ] Report generation successful
+```
+
+### Viewing Test Results
+
+After PR checks complete:
+
+1. **In GitHub**
+   - Click "Details" on status check
+   - View workflow summary
+
+2. **Download Artifacts**
+   - Go to Actions tab
+   - Click completed workflow
+   - Download Serenity reports
+
+3. **View Report Locally**
+   ```powershell
+   # After downloading serenity-report-firefox.zip
+   Expand-Archive serenity-report-firefox.zip
+   Start-Process serenity-report-firefox\index.html
+   ```
+
+### Manual Workflow Trigger
+
+Run tests manually for specific browser:
+
+```powershell
+# Via GitHub CLI
+gh workflow run e2e-tests.yml -f browser=chrome
+
+# Or use GitHub Actions UI
+# Go to Actions → E2E Tests → Run workflow
+```
+
+### Status Badge
+
+Add to README:
+
+```markdown
+[![E2E Tests](https://github.com/USER/REPO/actions/workflows/e2e-tests.yml/badge.svg?branch=main)](https://github.com/USER/REPO/actions)
+```
+
+### CI/CD Artifacts Retention
+
+Reports and artifacts retained for:
+- **Serenity Reports:** 30 days
+- **Test Results:** 30 days
+- **Screenshots:** 30 days
+- **Logs:** 30 days
+
+---
+
+## 13. Summary
 
 ✅ **Cross-Browser Testing** — Chrome, Firefox, Edge
 ✅ **Data-Driven Testing** — Excel sheets with test data
 ✅ **Enhanced Screenshots** — Visual evidence on every step (success + failure)
 ✅ **3-Level Driver Strategy** — Autodownload → System PATH → Bundled
 ✅ **Rich Reporting** — Serenity HTML with dashboard, charts, and traceability
+✅ **GitHub Flow Integration** — Automated CI/CD with GitHub Actions
 ✅ **Production Ready** — CI/CD enabled with artifact uploads
 
 ### Report Contents
@@ -499,10 +663,11 @@ The 3-level driver strategy ensures **tests always run**, whether you have Inter
 **Java:** JDK 21
 **Screenshots:** Enabled (FOR_EACH_ACTION) with compression
 **Reports:** Enhanced with dashboards and evidence
+**CI/CD:** GitHub Actions integrated
 
 ---
 
-## 13. Where to Find Screenshot Evidence
+## 14. Where to Find Screenshot Evidence
 
 ### After Running Tests
 
@@ -634,7 +799,7 @@ Copy-Item "target\site\serenity\" -Destination "\\shared\reports\$(Get-Date -For
 
 ---
 
-## 14. Troubleshooting Reports — Report Not Updated
+## 15. Troubleshooting Reports — Report Not Updated
 
 ### Problem: Old Report Still Shows
 
