@@ -57,8 +57,25 @@ jobs:
         shell: powershell
 
       - name: 🚀 Run E2E Tests
+        id: e2e
         run: |
           .\gradlew.bat clean test -Pbrowser=${{ matrix.browser }} --info 2>&1 | Tee-Object test-output.log
+        shell: powershell
+
+      - name: 🧾 Record browser status
+        if: always()
+        run: |
+          $browser = "${{ matrix.browser }}"
+          $outcome = "${{ steps.e2e.outcome }}"
+          $status = if ($outcome -eq "success") { "success" } else { "failure" }
+
+          @(
+            "browser=$browser"
+            "status=$status"
+            "outcome=$outcome"
+          ) | Set-Content -Path test-status.txt -Encoding utf8
+
+          Write-Host "Recorded status for $browser: $status"
         shell: powershell
 
       - name: 📊 Generate Serenity Report
@@ -91,6 +108,14 @@ jobs:
             target/test-results/
           retention-days: 30
 
+      - name: 📎 Upload Browser Status
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-status-${{ matrix.browser }}
+          path: test-status.txt
+          retention-days: 30
+
       - name: 📝 Upload Test Logs
         if: always()
         uses: actions/upload-artifact@v4
@@ -113,18 +138,48 @@ jobs:
 
       - name: 📈 Generate summary
         run: |
-          if [ "${{ needs.test.result }}" != "success" ]; then
-            echo "## ❌ E2E Test Execution Summary" >> $GITHUB_STEP_SUMMARY
-            echo "At least one browser job failed. See the uploaded artifacts for details." >> $GITHUB_STEP_SUMMARY
-            exit 1
-          fi
-
           echo "## 🚀 E2E Test Execution Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Browsers Tested:" >> $GITHUB_STEP_SUMMARY
-          echo "- ✓ Firefox" >> $GITHUB_STEP_SUMMARY
-          echo "- ✓ Chrome" >> $GITHUB_STEP_SUMMARY
-          echo "- ✓ Edge" >> $GITHUB_STEP_SUMMARY
+
+          status_files=$(find artifacts -name test-status.txt -type f | sort)
+
+          if [ -z "$status_files" ]; then
+            echo "⚠ No browser status files were found." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### Browser results:" >> $GITHUB_STEP_SUMMARY
+            failed_browsers=()
+            passed_browsers=()
+
+            while IFS= read -r file; do
+              browser=$(grep '^browser=' "$file" | cut -d'=' -f2)
+              status=$(grep '^status=' "$file" | cut -d'=' -f2)
+
+              if [ "$status" = "success" ]; then
+                passed_browsers+=("$browser")
+              else
+                failed_browsers+=("$browser")
+              fi
+            done <<< "$status_files"
+
+            if [ ${#failed_browsers[@]} -gt 0 ]; then
+              echo "- ❌ Failed: ${failed_browsers[*]}" >> $GITHUB_STEP_SUMMARY
+            fi
+
+            if [ ${#passed_browsers[@]} -gt 0 ]; then
+              echo "- ✅ Passed: ${passed_browsers[*]}" >> $GITHUB_STEP_SUMMARY
+            fi
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ needs.test.result }}" != "success" ]; then
+            echo "### Overall status: ❌ Failure" >> $GITHUB_STEP_SUMMARY
+            echo "At least one browser job failed. See the uploaded artifacts for details." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### Overall status: ✅ Success" >> $GITHUB_STEP_SUMMARY
+            echo "All browser jobs completed successfully." >> $GITHUB_STEP_SUMMARY
+          fi
+
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Artifacts:" >> $GITHUB_STEP_SUMMARY
           echo "- 📊 Serenity Reports (HTML)" >> $GITHUB_STEP_SUMMARY
