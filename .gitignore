@@ -1,6 +1,9 @@
 .gradle
 build/
 target/
+drivers/
+history/
+*.log
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/

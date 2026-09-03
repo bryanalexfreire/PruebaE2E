@@ -254,30 +254,27 @@ webdriver.screenshot.dir=target/site/serenity/screenshots
 
 ---
 
-## 7. WebDriver Management — 3-Level Strategy
+## 7. WebDriver Management — Runtime Resolution
 
-The project implements an intelligent **3-level fallback strategy** for driver management:
+The project now uses **runtime WebDriver resolution** so CI and local runs do not depend on fixed driver paths.
 
 ### How It Works
 
 ```
-Level 1: Serenity Autodownload
-         (Downloads from internet if available)
-         ↓ (if fails or no internet)
-Level 2: System PATH
-         (Uses Chrome/Firefox/Edge installed globally)
-         ↓ (if not found)
-Level 3: Bundled Drivers
-         (Uses drivers in /drivers folder - ALWAYS EXISTS ✅)
+Serenity webdriver.autodownload=true
+         ↓
+Selenium Manager resolves the correct driver for the selected browser
+         ↓
+If resolution fails, the job surfaces the real environment error
 ```
 
-### Available Drivers
+### Browser Selection
 
-| Browser | Version | Bundled Path |
-|---------|---------|------|
-| Chrome  | 147 | `drivers/chrome/147/extracted/chromedriver.exe` |
-| Firefox | 150 | `drivers/firefox/150/extracted/geckodriver.exe` |
-| Edge    | 147 | `drivers/edge/147/msedgedriver.exe` |
+| Browser | Execution value |
+|---------|-----------------|
+| Chrome  | `-Pbrowser=chrome` |
+| Firefox | `-Pbrowser=firefox` |
+| Edge    | `-Pbrowser=edge` |
 
 ### Configuration
 
@@ -285,9 +282,6 @@ Level 3: Bundled Drivers
 ```ini
 webdriver.autodownload=true
 webdriver.driver=firefox
-webdriver.firefox.driver=drivers/firefox/150/extracted/geckodriver.exe
-webdriver.chrome.driver=drivers/chrome/147/extracted/chromedriver.exe
-webdriver.edge.driver=drivers/edge/147/msedgedriver.exe
 ```
 
 **build.gradle:**
@@ -295,12 +289,6 @@ webdriver.edge.driver=drivers/edge/147/msedgedriver.exe
 test {
     def browser = (project.findProperty("browser") ?: 'firefox').toString().toLowerCase()
     systemProperty "webdriver.driver", browser
-
-    // Support custom driver path
-    def driverPath = project.findProperty("driverPath") ?: System.getenv("DRIVER_PATH")
-    if (driverPath) {
-        systemProperty "webdriver.${browser}.driver", driverPath
-    }
 }
 ```
 
@@ -309,8 +297,8 @@ test {
 | Issue | Solution |
 |-------|----------|
 | Driver not found | Run `.\gradlew.bat test --info` to see logs; Serenity auto-downloads |
-| Permission denied | `Get-ChildItem drivers -Recurse -File \| % { Unblock-File $_.FullName }` |
-| Custom driver path | `$env:DRIVER_PATH = "C:\path\to\driver.exe"` then run tests |
+| Permission denied | If you keep a local fallback driver folder, unblock the files first |
+| Stale driver version | Remove old local overrides and let Selenium Manager resolve the binary |
 | Port conflicts | `taskkill /F /IM chromedriver.exe; taskkill /F /IM geckodriver.exe` |
 
 ---
@@ -320,7 +308,7 @@ test {
 - **JDK 21** installed and available on `PATH` — Verify with `java -version`
 - **Gradle** — Not required, project uses `gradlew.bat`
 - **Internet** (recommended for first run) — Serenity downloads drivers automatically
-  - Fallback: Uses system-installed drivers or bundled drivers in `/drivers`
+  - If the environment has no network access, the run will fail fast and the workflow will show the real driver error instead of masking it
 
 ### Quick Setup
 
@@ -328,8 +316,8 @@ test {
 # Verify Java
 java -version
 
-# List bundled drivers
-Get-ChildItem drivers -Recurse -Filter "*.exe"
+# Inspect current browser setup
+Get-ChildItem Env:BROWSER,Env:JAVA_HOME,Env:GRADLE_OPTS
 
 # Run tests (auto-configures drivers)
 .\gradlew.bat clean test -Pbrowser=firefox
@@ -470,7 +458,7 @@ jobs:
           path: target/site/serenity/
 ```
 
-The 3-level driver strategy ensures **tests always run**, whether you have Internet, system drivers, or only bundled drivers.
+The driver strategy is now intentionally simple: Serenity/Selenium Manager resolves the browser driver at runtime, so CI failures point to real environment or browser issues instead of stale binary paths.
 
 ---
 

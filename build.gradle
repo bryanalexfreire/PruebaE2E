@@ -84,17 +84,6 @@ test {
     def effectiveDriver = (browser == 'safari') ? 'remote' : browser
     systemProperty "webdriver.driver", effectiveDriver
 
-    // Use a bundled driver if a path is not supplied externally
-    def driverPath = project.findProperty("driverPath") ?: System.getenv("DRIVER_PATH")
-    if (!driverPath && browser == 'edge') {
-        def bundledEdgeDriver = file('drivers/edge/147/msedgedriver.exe')
-        if (bundledEdgeDriver.exists()) {
-            driverPath = bundledEdgeDriver.absolutePath
-        }
-    }
-    if (driverPath) {
-        systemProperty "webdriver.${browser}.driver", driverPath
-    }
 
     // Remote / Safari execution support
     if (browser == 'safari' || browser == 'remote') {
