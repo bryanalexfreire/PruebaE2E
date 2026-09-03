@@ -83,9 +83,9 @@ jobs:
         run: |
           $reportPath = "target\site\serenity\index.html"
           if (Test-Path $reportPath) {
-            Write-Host "✓ Serenity report generated successfully"
+            Write-Host "Serenity report generated successfully"
           } else {
-            Write-Host "⚠ Serenity report not found"
+            Write-Host "Serenity report not found"
           }
         shell: powershell
 
