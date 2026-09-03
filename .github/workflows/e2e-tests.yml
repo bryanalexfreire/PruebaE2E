@@ -75,7 +75,7 @@ jobs:
             "outcome=$outcome"
           ) | Set-Content -Path test-status.txt -Encoding utf8
 
-          Write-Host "Recorded status for $browser: $status"
+           Write-Host "Recorded status for ${browser}: $status"
         shell: powershell
 
       - name: 📊 Generate Serenity Report
@@ -186,4 +186,3 @@ jobs:
           echo "- 📋 Test Results (XML)" >> $GITHUB_STEP_SUMMARY
           echo "- 📸 Screenshots (PNG)" >> $GITHUB_STEP_SUMMARY
           echo "- 📝 Test Logs" >> $GITHUB_STEP_SUMMARY
-
