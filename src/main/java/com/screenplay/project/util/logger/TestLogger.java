@@ -1,32 +1,21 @@
 package com.screenplay.project.util.logger;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+/** Console / CI log of the test run (SLF4J + Log4j2). */
 public final class TestLogger {
-    private static final Logger logger = LoggerFactory.getLogger(TestLogger.class);
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestLogger.class);
+
     private TestLogger() {
     }
-    public static void info(String msg) {
-        logger.info(msg);
+
+    public static void info(String message) {
+        LOGGER.info(message);
     }
-    public static void debug(String msg) {
-        logger.debug(msg);
-    }
-    public static void warn(String msg) {
-        logger.warn(msg);
-    }
-    public static void error(String msg, Throwable e) {
-        logger.error(msg, e);
-    }
-    public static void error(String msg) {
-        logger.error(msg);
-    }
-    public static void taskStart(String name, String actor) {
-        logger.info("▶ TASK [{}] — {}", name, actor);
-    }
-    public static void taskComplete(String name, long ms) {
-        logger.info("✓ COMPLETED [{}] in {}ms", name, ms);
-    }
-    public static void click(String el) {
-        logger.info("🖱 CLICK [{}]", el);
+
+    public static void warn(String message) {
+        LOGGER.warn(message);
     }
 }

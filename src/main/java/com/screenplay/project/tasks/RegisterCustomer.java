@@ -1,35 +1,31 @@
 package com.screenplay.project.tasks;
 
-import com.screenplay.project.model.ModelCustomer;
+import com.screenplay.project.model.Customer;
 import com.screenplay.project.ui.PageCar;
 import net.serenitybdd.screenplay.Performable;
 import net.serenitybdd.screenplay.Task;
-import net.serenitybdd.screenplay.actions.Click;
 import net.serenitybdd.screenplay.actions.Enter;
 
 /**
- * Opens the "Place Order" modal, fills in the customer details, and submits the purchase.
- * Expects a fully populated {@link ModelCustomer} object.
+ * Opens the "Place Order" modal, waits until it is fully open (typing during the animation
+ * can be lost), fills in the customer details and submits the purchase.
  */
 public final class RegisterCustomer {
+
     private RegisterCustomer() {
     }
 
-    /**
-     * Returns a task that completes the purchase form with the given customer data.
-     *
-     * @param customer the customer details (name, country, city, card, month, year)
-     */
-    public static Performable withData(ModelCustomer customer) {
-        return Task.where("Register customer and complete purchase",
-                Click.on(PageCar.BTN_PLACE_ORDER),
-                Enter.theValue(customer.getName()).into(PageCar.INPUT_NAME),
-                Enter.theValue(customer.getCountry()).into(PageCar.INPUT_COUNTRY),
-                Enter.theValue(customer.getCity()).into(PageCar.INPUT_CITY),
-                Enter.theValue(customer.getCard()).into(PageCar.INPUT_CARD),
-                Enter.theValue(customer.getMonth()).into(PageCar.INPUT_MONTH),
-                Enter.theValue(customer.getYear()).into(PageCar.INPUT_YEAR),
-                Click.on(PageCar.BTN_PURCHASE)
+    public static Performable withData(Customer customer) {
+        return Task.where("{0} places the order for " + customer.name(),
+                ClickWhenReady.on(PageCar.BTN_PLACE_ORDER),
+                WaitForModal.withId(PageCar.ORDER_MODAL_ID),
+                Enter.theValue(customer.name()).into(PageCar.INPUT_NAME),
+                Enter.theValue(customer.country()).into(PageCar.INPUT_COUNTRY),
+                Enter.theValue(customer.city()).into(PageCar.INPUT_CITY),
+                Enter.theValue(customer.card()).into(PageCar.INPUT_CARD),
+                Enter.theValue(customer.month()).into(PageCar.INPUT_MONTH),
+                Enter.theValue(customer.year()).into(PageCar.INPUT_YEAR),
+                ClickWhenReady.on(PageCar.BTN_PURCHASE)
         );
     }
 }

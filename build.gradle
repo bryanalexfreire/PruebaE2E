@@ -1,112 +1,163 @@
 plugins {
     id 'java'
+    id 'checkstyle'
     id 'net.serenity-bdd.serenity-gradle-plugin' version '4.1.14'
+    id 'com.github.spotbugs' version '6.0.26'
 }
 
-// Set the Java source compatibility version
 java {
     sourceCompatibility = '21'
 }
 
-// Define the repositories to be used for dependency resolution
 repositories {
-    maven {
-        url 'https://repo.maven.apache.org/maven2'
-    }
+    mavenCentral()
 }
 
-// Define extra properties
 ext {
     serenity_version = '4.1.14'
 }
 
-// Define the project dependencies
+// ---- Static analysis: gradlew checkstyleMain checkstyleTest spotbugsMain (also in CI)
+checkstyle {
+    toolVersion = '10.17.0'
+    configFile = file('config/checkstyle/checkstyle.xml')
+    maxWarnings = 0
+}
+
+spotbugs {
+    excludeFilter = file('config/spotbugs/exclude.xml')
+}
+tasks.named('spotbugsTest') { enabled = false }   // step definitions and unit tests: Checkstyle only
+tasks.withType(com.github.spotbugs.snom.SpotBugsTask).configureEach {
+    reports { html { required = true }; xml { required = false } }
+}
+
 dependencies {
-    // Core Serenity BDD libraries
-    implementation group: 'net.serenity-bdd', name: 'serenity-core',                version: serenity_version
-    implementation group: 'net.serenity-bdd', name: 'serenity-junit',               version: serenity_version
-    implementation group: 'net.serenity-bdd', name: 'serenity-cucumber',            version: serenity_version
-    implementation group: 'net.serenity-bdd', name: 'serenity-screenplay-webdriver', version: serenity_version
-    implementation group: 'net.serenity-bdd', name: 'serenity-screenplay',          version: serenity_version
+    // Serenity BDD: Screenplay, WebDriver, Cucumber integration and JUnit 4 runner
+    implementation "net.serenity-bdd:serenity-core:${serenity_version}"
+    implementation "net.serenity-bdd:serenity-junit:${serenity_version}"
+    implementation "net.serenity-bdd:serenity-cucumber:${serenity_version}"
+    implementation "net.serenity-bdd:serenity-screenplay-webdriver:${serenity_version}"
+    implementation "net.serenity-bdd:serenity-screenplay:${serenity_version}"
+    implementation 'junit:junit:4.13.2'
 
-    // Test runner
-    implementation group: 'junit', name: 'junit', version: '4.13.2'
-
-    // Excel support for DDT (Data-Driven Testing)
+    // Excel test data (data-driven scenarios)
     implementation 'org.apache.poi:poi-ooxml:5.2.5'
-
-    // String utilities used by ExcelReader
     implementation 'org.apache.commons:commons-lang3:3.12.0'
 
-    // Logging - SLF4J + Log4j2 (Centralized logging)
+    // Logging: SLF4J + Log4j2
     implementation 'org.slf4j:slf4j-api:2.0.7'
     implementation 'org.apache.logging.log4j:log4j-core:2.20.0'
     implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.20.0'
-
-    // CSV parsing for test data
-    implementation 'org.apache.commons:commons-csv:1.10.0'
-
-    // JSON processing for metrics
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
-
-    // Visual regression testing (Ashot for screenshot comparison)
-    implementation 'ru.yandex.qatools.ashot:ashot:1.5.4'
-
-    // HTTP client for monitoring integration
-    implementation 'org.apache.httpcomponents.client5:httpclient5:5.2.1'
 }
 
-// Reads the Excel file and writes the real test rows into the Examples block
-// of every feature file that contains an @externaldata descriptor.
-tasks.register('prepareExternalDataFeatures', JavaExec) {
+/** Value of a -P property, then of an environment variable, then the default. */
+def setting(String property, String environment, String fallback) {
+    (project.findProperty(property) ?: System.getenv(environment) ?: fallback).toString()
+}
+
+// ---- Test data: the Excel rows are written into a generated copy of the features
+//      (build/generated/features). The source features are never modified.
+def featuresSource = 'src/test/resources/features'
+def featuresGenerated = layout.buildDirectory.dir('generated/features').get().asFile
+// relative to the project folder: Serenity cannot map absolute feature paths on Windows
+def featuresGeneratedPath = project.relativePath(featuresGenerated).replace(File.separator, '/')
+
+tasks.register('generateFeatures', JavaExec) {
+    group = 'verification'
+    description = 'Writes the external test data (Excel) into a generated copy of the feature files.'
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'com.screenplay.project.util.overwritedata.FeatureOverwriteCli'
-    args 'prepare'
+    mainClass = 'com.screenplay.project.util.data.GenerateFeatures'
+    args featuresSource, featuresGenerated.path
+    inputs.dir featuresSource
+    inputs.dir 'src/test/resources/data'
+    outputs.dir featuresGenerated
+    doFirst { delete featuresGenerated }
 }
 
-// Restores the original @externaldata descriptor after the test run,
-// so the feature files stay clean in version control.
-tasks.register('restoreExternalDataFeatures', JavaExec) {
+// ---- Browser driver: Selenium Manager download first; if it fails or does not match the installed
+//      browser, a matching bundled driver from drivers/<browser>/<version>/; otherwise a clear error.
+//      The chosen driver is passed to the test run (see test.doFirst).
+def runBrowser = setting('browser', 'BROWSER', 'firefox').toLowerCase()
+def driverFile = layout.buildDirectory.file('driver.properties').get().asFile
+
+tasks.register('resolveDriver', JavaExec) {
+    group = 'verification'
+    description = 'Chooses the driver for -Pbrowser: downloaded, or a matching bundled one from drivers/.'
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'com.screenplay.project.util.overwritedata.FeatureOverwriteCli'
-    args 'restore'
+    mainClass = 'com.screenplay.project.util.driver.ResolveDriver'
+    args runBrowser, 'drivers', driverFile.path
+    // -PdriverDownload=off: offline, use only the bundled drivers
+    systemProperty 'driver.download.off', setting('driverDownload', 'DRIVER_DOWNLOAD', 'on') == 'off'
+    onlyIf { runBrowser in ['chrome', 'firefox', 'edge'] }
+    outputs.upToDateWhen { false }
 }
 
+//   gradlew refreshBundledDrivers -Pbrowser=chrome   copies the downloaded driver to drivers/<browser>/<version>/
+tasks.register('refreshBundledDrivers', JavaExec) {
+    group = 'verification'
+    description = 'Downloads the driver for -Pbrowser and stores it in drivers/ as the offline fallback.'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.screenplay.project.util.driver.ResolveDriver'
+    args runBrowser, 'drivers', driverFile.path, 'copy-to-bundled'
+}
+
+// ---- Unit tests of the support code (test data, receipt parsing, account resolution): no browser
+//   gradlew unitTest
+tasks.register('unitTest', Test) {
+    group = 'verification'
+    description = 'Runs the unit tests of the support code (no browser).'
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    filter { includeTestsMatching 'com.screenplay.project.unit.*' }
+}
+
+// ---- Reports: cleanReports (before the run) and publishReport (versioned copy of a run)
+apply from: 'gradle/reports.gradle'
+
+// ---- Test run
+//   gradlew test -Pbrowser=chrome|firefox|edge -Pheadless=true -Ptags="@TC-03" -PignoreFailures=true
+//   gradlew test -Ptags="@bug"   checks whether the known defects are fixed yet
 test {
-    // Always prepare external data before running and restore + aggregate afterwards
-    dependsOn tasks.named('prepareExternalDataFeatures'), 'cleanReports'
-    finalizedBy tasks.named('restoreExternalDataFeatures'), tasks.named('aggregate')
+    dependsOn tasks.named('generateFeatures'), tasks.named('cleanReports'), tasks.named('resolveDriver')
+    finalizedBy tasks.named('aggregate')
+    // an E2E run checks a live site: never skip it as up to date
+    outputs.upToDateWhen { false }
+    // E2E scenarios only (unit tests run in unitTest)
+    filter { includeTestsMatching 'com.screenplay.project.runners.*' }
+    // the outline examples come from the generated features
+    systemProperty 'cucumber.features', featuresGeneratedPath
+    systemProperty 'serenity.project.requirements.directory', featuresGeneratedPath
 
-    systemProperty "file.encoding", "utf-8"
+    def browser = setting('browser', 'BROWSER', 'firefox').toLowerCase()
+    // default: work in progress and known defects (@bug) are not part of the regular run
+    def tags = setting('tags', 'CUCUMBER_TAGS', 'not @wip and not @bug')
 
-    // Browser selection: pass -Pbrowser=chrome|firefox|edge or set the BROWSER env variable
-    def browser = (project.findProperty("browser") ?: System.getenv("BROWSER") ?: 'firefox').toString().toLowerCase()
-    def effectiveDriver = (browser == 'safari') ? 'remote' : browser
-    systemProperty "webdriver.driver", effectiveDriver
-
-
-    // Remote / Safari execution support
-    if (browser == 'safari' || browser == 'remote') {
-        def remoteUrl    = project.findProperty("remoteUrl")    ?: System.getenv("SELENIUM_REMOTE_URL") ?: "http://localhost:4444/wd/hub"
-        def remoteBrowser = project.findProperty("remoteBrowser") ?: System.getenv("REMOTE_BROWSER")    ?: (browser == 'safari' ? 'safari' : 'chrome')
-        systemProperty "webdriver.remote.url",    remoteUrl
-        systemProperty "webdriver.remote.driver", remoteBrowser
-    }
-
-    // Optional tag filter: -Ptags="@BuyDevicesHP_DDT" or CUCUMBER_TAGS env variable
-    def tags = project.findProperty("tags") ?: System.getenv("CUCUMBER_TAGS")
+    systemProperty 'file.encoding', 'utf-8'
+    systemProperty 'webdriver.driver', browser == 'safari' ? 'remote' : browser
+    systemProperty 'headless.mode', setting('headless', 'HEADLESS', 'false')
     if (tags) {
-        systemProperty "cucumber.filter.tags", tags
+        systemProperty 'cucumber.filter.tags', tags
     }
-}
+    if (browser in ['safari', 'remote']) {
+        systemProperty 'webdriver.remote.url', setting('remoteUrl', 'SELENIUM_REMOTE_URL', 'http://localhost:4444/wd/hub')
+        systemProperty 'webdriver.remote.driver', setting('remoteBrowser', 'REMOTE_BROWSER', browser == 'safari' ? 'safari' : 'chrome')
+    }
 
-// Clean report directories before running tests (ensures fresh reports)
-tasks.register('cleanReports') {
+    // A failing scenario must not stop the reports (aggregate, publishReport) from being produced
+    ignoreFailures = setting('ignoreFailures', 'IGNORE_FAILURES', 'false').toBoolean()
+
+    // Remembered for publishReport, which runs as a separate invocation
     doFirst {
-        delete 'target/site/serenity'
-        delete 'target/test-results'
-        delete 'build/cucumber-reports'
-        println("✓ Old reports cleaned")
+        file('build').mkdirs()
+        file('build/run-browser.txt').text = browser
+        // use exactly the driver chosen by resolveDriver (no second download inside the test run)
+        if (driverFile.exists()) {
+            def driver = new Properties()
+            driverFile.withReader('UTF-8') { driver.load(it) }
+            systemProperty driver.getProperty('driver.property'), driver.getProperty('driver.path')
+            systemProperty 'webdriver.autodownload', 'false'
+            logger.lifecycle("Driver for ${browser} (${driver.getProperty('driver.source')}): ${driver.getProperty('driver.path')}")
+        }
     }
 }
-

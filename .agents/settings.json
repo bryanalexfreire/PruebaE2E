@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./gradlew.bat test:*)",
+      "Bash(./gradlew.bat compileTestJava*)",
+      "Bash(gradlew test:*)",
+      "Bash(gradlew compileTestJava*)",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_find",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_tabs"
+    ],
+    "deny": [
+      "mcp__playwright__browser_run_code_unsafe",
+      "mcp__playwright__browser_route",
+      "mcp__playwright__browser_network_state_set",
+      "Bash(git push:*)",
+      "Bash(git commit:*)",
+      "Bash(git merge:*)",
+      "Bash(git tag:*)"
+    ]
+  }
+}

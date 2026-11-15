@@ -17,8 +17,8 @@ public final class CloseSession {
      */
     public static Performable now() {
         return Task.where("Close purchase modal and logout",
-                SafeClick.on(PageCar.BTN_OK),
-                SafeClick.on(PageCar.BTN_LOGOUT)
+                ClickWhenReady.on(PageCar.BTN_OK),
+                ClickWhenReady.on(PageCar.BTN_LOGOUT)
         );
     }
 }
