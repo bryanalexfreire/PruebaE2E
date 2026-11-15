@@ -92,7 +92,7 @@ Before every run, `resolveDriver` chooses the driver for `-Pbrowser` and passes 
 | Order | Source | When |
 |---|---|---|
 | 1 | **Download** with Selenium Manager (cached in `~/.cache/selenium`) | normal case; it must match the installed browser |
-| 2 | **Bundled** driver from `drivers/<browser>/<version>/` | the download fails (no Internet, blocked network) or returns another version |
+| 2 | **Bundled** driver from `drivers/<browser>/<version>/` (optional folder) | the download fails (no Internet, blocked network) or returns another version |
 | 3 | **Clear error** | nothing matches: it says the installed version, what was tried and how to fix it |
 
 Chrome and Edge drivers must have the same major version as the browser; a driver of another version is never used (it would fail later with *session not created*). geckodriver supports a range of Firefox versions.
@@ -103,7 +103,7 @@ gradlew test -Pbrowser=chrome -PdriverDownload=off # offline: bundled drivers on
 gradlew refreshBundledDrivers -Pbrowser=chrome     # store the current driver in drivers/ as fallback
 ```
 
-The bundled drivers are Windows executables (`drivers/chrome/157`, `drivers/edge/157`, `drivers/firefox/latest`); refresh them when the browsers update. Edge: Selenium 4.21 still points to Microsoft's retired driver site, so the resolver passes the current one (`msedgedriver.microsoft.com`) as mirror.
+The `drivers/` folder is optional and not in the repository: the download covers the normal case. Create it only for offline runs with `gradlew refreshBundledDrivers -Pbrowser=<browser>` (drivers are per operating system and must match the installed browser version). Edge: Selenium 4.21 still points to Microsoft's retired driver site, so the resolver passes the current one (`msedgedriver.microsoft.com`) as mirror.
 
 From the IDE, run tests with Gradle (IntelliJ: *Settings → Build Tools → Gradle → Run tests using: Gradle*), so the Excel data and the Serenity report are produced.
 
