@@ -1,9 +1,11 @@
 .gradle
 build/
 target/
-drivers/
 history/
 *.log
+
+# Local test account (see test-accounts.example.properties)
+test-accounts.properties
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
@@ -13,7 +15,7 @@ history/
 .idea/jarRepositories.xml
 .idea/compiler.xml
 .idea/workspace.xml
-.idea/copilotDiffState.xml
+.idea/*DiffState.xml
 .idea/libraries/
 *.iws
 *.iml
