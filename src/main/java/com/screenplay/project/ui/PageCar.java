@@ -30,6 +30,8 @@ public final class PageCar {
     public static final Target INPUT_CARD = Target.the("card input").located(By.id("card"));
     public static final Target INPUT_MONTH = Target.the("month input").located(By.id("month"));
     public static final Target INPUT_YEAR = Target.the("year input").located(By.id("year"));
+    public static final Target BTN_CLOSE_ORDER = Target.the("'Close' button of the order modal")
+            .located(By.xpath("//div[@id='orderModal']//button[text()='Close']"));
     public static final Target BTN_PURCHASE = Target.the("purchase button").located(By.xpath("//button[text()='Purchase']"));
 
     // Confirmation and logout
