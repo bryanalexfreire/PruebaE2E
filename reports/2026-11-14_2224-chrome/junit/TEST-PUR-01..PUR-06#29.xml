@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="PUR-01..PUR-06)" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-11-15T03:23:27" hostname="BRYAN-FREIRE" time="60.217">
+  <properties/>
+  <testcase name="A signed-in customer buys two devices and signs out #1(Purchase of devices in the Demoblaze store " classname="PUR-01..PUR-06)" time="34.962"/>
+  <testcase name="A signed-in customer buys two devices and signs out #2(Purchase of devices in the Demoblaze store " classname="PUR-01..PUR-06)" time="25.254"/>
+  <system-out><![CDATA[22:23:27 [INFO ] [Test worker]  - 
+  _____   ___   ___   _____     ___   _____     _     ___   _____   ___   ___  
+ |_   _| | __| / __| |_   _|   / __| |_   _|   /_\   | _ \ |_   _| | __| |   \ 
+   | |   | _|  \__ \   | |     \__ \   | |    / _ \  |   /   | |   | _|  | |) |
+   |_|   |___| |___/   |_|     |___/   |_|   /_/ \_\ |_|_\   |_|   |___| |___/ 
+
+A signed-in customer buys two devices and signs out(purchase-of-devices-in-the-demoblaze-store-(pur-01..pur-06);a-signed-in-customer-buys-two-devices-and-signs-out)
+--------------------------------------------------------------------------------
+22:23:27 [INFO ] [Test worker] com.screenplay.project.util.logger.TestLogger - SCENARIO START: A signed-in customer buys two devices and signs out [@completeFlow, @PUR, @completeFlowBP, @BuyDevicesHP_DDT, @positive, @critical, @TC-01, @TC-02, @TC-03, @TC-04, @TC-05]
+22:24:01 [INFO ] [Test worker] com.screenplay.project.util.logger.TestLogger - SCENARIO END: A signed-in customer buys two devices and signs out -> PASSED
+22:24:01 [INFO ] [Test worker]  - 
+  _____   ___   ___   _____     ___     _     ___   ___   ___   ___  
+ |_   _| | __| / __| |_   _|   | _ \   /_\   / __| / __| | __| |   \ 
+   | |   | _|  \__ \   | |     |  _/  / _ \  \__ \ \__ \ | _|  | |) |
+   |_|   |___| |___/   |_|     |_|   /_/ \_\ |___/ |___/ |___| |___/ 
+
+A signed-in customer buys two devices and signs out
+----------------------------------------------------------------------
+22:24:02 [INFO ] [Test worker] com.screenplay.project.util.logger.TestLogger - SCENARIO START: A signed-in customer buys two devices and signs out [@completeFlow, @PUR, @completeFlowBP, @BuyDevicesHP_DDT, @positive, @critical, @TC-01, @TC-02, @TC-03, @TC-04, @TC-05]
+22:24:26 [INFO ] [Test worker] com.screenplay.project.util.logger.TestLogger - SCENARIO END: A signed-in customer buys two devices and signs out -> PASSED
+22:24:27 [INFO ] [Test worker]  - 
+  _____   ___   ___   _____     ___     _     ___   ___   ___   ___  
+ |_   _| | __| / __| |_   _|   | _ \   /_\   / __| / __| | __| |   \ 
+   | |   | _|  \__ \   | |     |  _/  / _ \  \__ \ \__ \ | _|  | |) |
+   |_|   |___| |___/   |_|     |_|   /_/ \_\ |___/ |___/ |___| |___/ 
+
+A signed-in customer buys two devices and signs out
+----------------------------------------------------------------------
+]]></system-out>
+  <system-err><![CDATA[nov 14, 2026 10:23:31 P. M. org.openqa.selenium.devtools.CdpVersionFinder findNearestMatch
+ADVERTENCIA: Unable to find CDP implementation matching 157
+nov 14, 2026 10:23:31 P. M. org.openqa.selenium.chromium.ChromiumDriver lambda$new$5
+ADVERTENCIA: Unable to find version of CDP to use for 157.0.8103.78. You may need to include a dependency on a specific version of the CDP using something similar to `org.seleniumhq.selenium:selenium-devtools-v86:4.21.0` where the version ("v86") matches the version of the chromium-based browser you're using and the version number of the artifact is the same as Selenium's.
+nov 14, 2026 10:24:03 P. M. org.openqa.selenium.devtools.CdpVersionFinder findNearestMatch
+ADVERTENCIA: Unable to find CDP implementation matching 157
+nov 14, 2026 10:24:03 P. M. org.openqa.selenium.chromium.ChromiumDriver lambda$new$5
+ADVERTENCIA: Unable to find version of CDP to use for 157.0.8103.78. You may need to include a dependency on a specific version of the CDP using something similar to `org.seleniumhq.selenium:selenium-devtools-v86:4.21.0` where the version ("v86") matches the version of the chromium-based browser you're using and the version number of the artifact is the same as Selenium's.
+]]></system-err>
+</testsuite>

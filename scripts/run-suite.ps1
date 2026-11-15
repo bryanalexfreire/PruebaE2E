@@ -7,11 +7,9 @@
 .PARAMETER Browser
     Browser to use: firefox, chrome, edge (default: firefox)
 .EXAMPLE
-    .\run-suite.ps1 -Tags "@smoke" -Browser firefox
-    .\run-suite.ps1 -Tags "@authentication"
-    .\run-suite.ps1 -Tags "@positive" -Browser chrome
-    .\run-suite.ps1 -Tags "@smoke,@positive"
-    .\run-suite.ps1 -Tags "@smoke or @negative"
+    .\run-suite.ps1 -Tags "@BuyDevicesHP_DDT" -Browser firefox
+    .\run-suite.ps1 -Tags "@TC-03" -Browser chrome
+    .\run-suite.ps1 -Tags "@critical and not @bug"
 #>
 param(
     [string]$Tags = "",

@@ -19,14 +19,14 @@ public final class FindProduct {
      */
     public static Performable andAddToCart() {
         return Task.where("Add two products to cart",
-                SafeClick.on(PageMain.FIRST_PRODUCT),
-                SafeClick.on(PageProducts.ADD_TO_CART),
+                ClickWhenReady.on(PageMain.FIRST_PRODUCT),
+                ClickWhenReady.on(PageProducts.ADD_TO_CART),
                 AcceptBrowserAlert.now(),
-                SafeClick.on(PageMain.LOGO),
-                SafeClick.on(PageMain.SECOND_PRODUCT),
-                SafeClick.on(PageProducts.ADD_TO_CART),
+                ClickWhenReady.on(PageMain.LOGO),
+                ClickWhenReady.on(PageMain.SECOND_PRODUCT),
+                ClickWhenReady.on(PageProducts.ADD_TO_CART),
                 AcceptBrowserAlert.now(),
-                SafeClick.on(PageMain.LOGO)
+                ClickWhenReady.on(PageMain.LOGO)
         );
     }
 }

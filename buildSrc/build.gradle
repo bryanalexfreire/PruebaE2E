@@ -1,0 +1,13 @@
+// Build logic of the reports (gradle/reports.gradle), kept as plain classes so it can be unit tested.
+plugins {
+    id 'groovy'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation localGroovy()
+    testImplementation 'junit:junit:4.13.2'
+}

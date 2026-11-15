@@ -1,0 +1,89 @@
+// Reports of a test run. Each report has one role, so nothing is duplicated:
+//   Serenity  target/site/serenity/index.html     evidence: steps, Screenplay actions, a screenshot after
+//                                                  each step, data recorded, page HTML at failures
+//   Cucumber  build/cucumber-reports/json|html     results and data as text (light; written by the runner,
+//                                                  so it is always current, also from the IDE)
+//   JUnit     build/test-results/test/*.xml        CI checks
+//
+//   gradlew publishReport -Plabel=<name> [-PfailOnUnexpected=true]
+//   reports/<yyyy-MM-dd_HHmm>-<label>/serenity/   Serenity report (the evidence)
+//                                    /summary.md  verdict, results, known bugs, failure details
+//                                    /cucumber.json, junit/   raw results
+//   reports/LATEST.md and reports/index.md (newest first)
+//   In GitHub Actions it also writes the job summary and the outputs "unexpected", "known_bugs" and "dir".
+// The rules (statuses, verdict, summary) live in buildSrc/src/main/groovy/e2e/RunResults.groovy, with unit tests.
+
+import e2e.RunResults
+import groovy.json.JsonSlurper
+
+ext.reportPaths = [
+        serenity    : 'target/site/serenity',
+        cucumberJson: 'build/cucumber-reports/json/cucumber.json',
+        cucumberDir : 'build/cucumber-reports',
+        junit       : 'build/test-results/test',
+        browser     : 'build/run-browser.txt',
+]
+
+tasks.register('cleanReports') {
+    group = 'reporting'
+    description = 'Deletes the reports of the previous run, so every report shows only the current run.'
+    doFirst {
+        delete reportPaths.serenity, reportPaths.cucumberDir, reportPaths.junit
+    }
+}
+
+tasks.register('publishReport') {
+    group = 'reporting'
+    description = 'Copies the last run to reports/<date>-<label>/ (Serenity report, summary.md, raw results).'
+    doLast {
+        def cucumberJson = file(reportPaths.cucumberJson)
+        if (!cucumberJson.exists()) {
+            throw new GradleException("No ${cucumberJson}. Run the tests first: gradlew test")
+        }
+        def label = (project.findProperty('label') ?: 'local').toString().replaceAll(/[^\w.-]+/, '-')
+        def runName = "${new Date().format('yyyy-MM-dd_HHmm')}-${label}"
+        def target = file("reports/${runName}")
+        def browserFile = file(reportPaths.browser)
+        def browser = browserFile.exists() ? browserFile.text.trim() : 'unknown'
+
+        def scenarios = RunResults.scenarios(new JsonSlurper().parse(cucumberJson))
+        RunResults.attachSerenityEvidence(scenarios, serenityOutcomes(file(reportPaths.serenity)))
+        def verdict = RunResults.verdict(scenarios)
+        def summary = RunResults.summary(runName, browser, scenarios, verdict).join('\n') + '\n'
+
+        target.mkdirs()
+        if (file(reportPaths.serenity).exists()) {
+            copy { from reportPaths.serenity; into new File(target, 'serenity') }
+        }
+        copy { from cucumberJson; into target }
+        if (file(reportPaths.junit).exists()) {
+            copy { from reportPaths.junit; include '*.xml'; into new File(target, 'junit') }
+        }
+        new File(target, 'summary.md').text = summary
+        file('reports/LATEST.md').text = "# Latest run: ${runName}\n\n" +
+                "**${verdict.verdict}** · Passed ${verdict.passed} · Known bugs ${verdict.knownBugs} · Unexpected failures ${verdict.unexpected}\n\n" +
+                "- Summary: [${runName}/summary.md](${runName}/summary.md)\n" +
+                "- Serenity report: [${runName}/serenity/index.html](${runName}/serenity/index.html)\n"
+        def index = file('reports/index.md')
+        index.text = RunResults.index(runName, verdict, index.exists() ? index.readLines() : [])
+
+        println "Published ${target} (${verdict.verdict}: ${verdict.passed} passed, ${verdict.knownBugs} known bugs, ${verdict.unexpected} unexpected)."
+        def stepSummary = System.getenv('GITHUB_STEP_SUMMARY')
+        if (stepSummary) { new File(stepSummary) << summary }
+        def outputs = System.getenv('GITHUB_OUTPUT')
+        if (outputs) { new File(outputs) << "unexpected=${verdict.unexpected}\nknown_bugs=${verdict.knownBugs}\ndir=reports/${runName}\n" }
+        if ((project.findProperty('failOnUnexpected') ?: 'false').toBoolean() && verdict.unexpected) {
+            throw new GradleException("${verdict.unexpected} unexpected failure(s); see ${target}/summary.md")
+        }
+    }
+}
+
+/** Serenity outcome files of the run, as [page, json], in a stable order. */
+List<Map> serenityOutcomes(File dir) {
+    if (!dir.exists()) { return [] }
+    dir.listFiles().findAll { it.name.endsWith('.json') }.sort { it.name }.collect { json ->
+        def parsed = null
+        try { parsed = new JsonSlurper().parse(json) } catch (ignored) { /* not an outcome file */ }
+        [page: json.name.replace('.json', '.html'), json: parsed]
+    }
+}

@@ -1,0 +1,120 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop, 'release/**', 'hotfix/**']
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: 'Cucumber tags (empty = not @wip and not @bug; "@bug" checks the known defects)'
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+  checks: write          # JUnit results as a check run
+  pull-requests: write   # test report on the pull request
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build, unit tests and static analysis
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+      - run: chmod +x gradlew
+      - name: Unit tests of the report logic (buildSrc)
+        run: ./gradlew -p buildSrc test --no-daemon
+      - name: Unit tests, Checkstyle and SpotBugs
+        run: ./gradlew unitTest checkstyleMain checkstyleTest spotbugsMain --no-daemon
+      - name: Upload unit test and analysis reports
+        if: failure()
+        uses: actions/upload-artifact@v5
+        with:
+          name: build-reports-${{ github.run_number }}
+          path: |
+            build/reports/
+            buildSrc/build/reports/
+          retention-days: 14
+
+  e2e:
+    name: E2E (${{ matrix.browser }})
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      # One browser at a time: the browsers share the test account, and Demoblaze keeps one cart per account.
+      # With one account per browser (secrets DEMOBLAZE_USERNAME_CHROME, ..._FIREFOX, ..._EDGE) this can be removed.
+      max-parallel: 1
+      # Pull requests: chrome only (fast feedback). develop / release / hotfix: chrome, firefox and edge.
+      matrix:
+        browser: ${{ fromJSON(github.event_name == 'pull_request' && '["chrome"]' || '["chrome", "firefox", "edge"]') }}
+    env:
+      CUCUMBER_TAGS: ${{ github.event.inputs.tags != '' && github.event.inputs.tags || 'not @wip and not @bug' }}
+      # Test account (repository secrets); never in the code or the test data
+      DEMOBLAZE_USERNAME: ${{ secrets.DEMOBLAZE_USERNAME }}
+      DEMOBLAZE_PASSWORD: ${{ secrets.DEMOBLAZE_PASSWORD }}
+      DEMOBLAZE_USERNAME_CHROME: ${{ secrets.DEMOBLAZE_USERNAME_CHROME }}
+      DEMOBLAZE_PASSWORD_CHROME: ${{ secrets.DEMOBLAZE_PASSWORD_CHROME }}
+      DEMOBLAZE_USERNAME_FIREFOX: ${{ secrets.DEMOBLAZE_USERNAME_FIREFOX }}
+      DEMOBLAZE_PASSWORD_FIREFOX: ${{ secrets.DEMOBLAZE_PASSWORD_FIREFOX }}
+      DEMOBLAZE_USERNAME_EDGE: ${{ secrets.DEMOBLAZE_USERNAME_EDGE }}
+      DEMOBLAZE_PASSWORD_EDGE: ${{ secrets.DEMOBLAZE_PASSWORD_EDGE }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+      - run: chmod +x gradlew
+
+      - name: Install Edge
+        if: matrix.browser == 'edge'
+        run: |
+          curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft.gpg
+          echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/edge stable main" | sudo tee /etc/apt/sources.list.d/microsoft-edge.list
+          sudo apt-get update && sudo apt-get install -y microsoft-edge-stable
+
+      # Failures do not stop the job here: the report is always generated, then publishReport decides.
+      - name: Run tests
+        run: ./gradlew test --no-daemon -Pbrowser=${{ matrix.browser }} -Pheadless=true -PignoreFailures=true
+
+      - name: Publish report (job summary + versioned folder)
+        id: report
+        if: always()
+        run: ./gradlew publishReport --no-daemon -Plabel=ci-${{ github.run_number }}-${{ matrix.browser }}
+
+      - name: Test results in the checks tab (JUnit)
+        if: always() && hashFiles('build/test-results/test/*.xml') != ''
+        uses: dorny/test-reporter@v2
+        with:
+          name: E2E results (${{ matrix.browser }})
+          path: build/test-results/test/*.xml
+          reporter: java-junit
+          fail-on-error: false
+
+      - name: Upload Serenity report (evidence) and raw results
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: e2e-report-${{ matrix.browser }}-${{ github.run_number }}
+          path: ${{ steps.report.outputs.dir || 'target/site/serenity' }}
+          retention-days: 30
+
+      - name: Fail on unexpected failures (known bugs @bug are reported, not blocking)
+        if: always() && steps.report.outputs.unexpected != '0'
+        run: |
+          echo "Unexpected failures: ${{ steps.report.outputs.unexpected }} (known bugs: ${{ steps.report.outputs.known_bugs }})"
+          exit 1

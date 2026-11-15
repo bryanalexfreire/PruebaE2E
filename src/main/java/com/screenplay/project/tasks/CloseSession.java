@@ -5,21 +5,18 @@ import net.serenitybdd.screenplay.Performable;
 import net.serenitybdd.screenplay.Task;
 
 /**
- * Closes the purchase confirmation dialog and logs out of Demoblaze.
- * This should be the last step in any scenario that completes a purchase.
+ * Accepts the purchase confirmation and signs out. The confirmation is handled by
+ * {@link AcceptPurchaseConfirmation}, so "Log out" is clicked only when no modal covers the page.
  */
 public final class CloseSession {
+
     private CloseSession() {
     }
 
-    /**
-     * Returns a task that clicks "OK" on the confirmation dialog and then logs out.
-     */
     public static Performable now() {
-        return Task.where("Close purchase modal and logout",
-                SafeClick.on(PageCar.BTN_OK),
-                SafeClick.on(PageCar.BTN_LOGOUT)
+        return Task.where("{0} accepts the confirmation and signs out",
+                AcceptPurchaseConfirmation.now(),
+                ClickWhenReady.on(PageCar.BTN_LOGOUT)
         );
     }
 }
-
