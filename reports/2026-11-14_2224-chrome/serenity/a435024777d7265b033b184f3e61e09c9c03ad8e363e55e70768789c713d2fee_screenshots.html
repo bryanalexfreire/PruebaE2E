@@ -1,0 +1,395 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Screenshots</title>
+
+<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+<link rel="apple-touch-icon" sizes="57x57" href="apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+<link rel="stylesheet" href="bootstrap-icons/bootstrap-icons.css">
+<!-- JQuery -->
+<script type="text/javascript" src="scripts/jquery-1.11.1.min.js"></script><!-- Required Stylesheets -->
+<link href="bootstrap-treeview/dist/bootstrap-treeview.min.css" rel="stylesheet">
+
+<!-- Required Javascript -->
+<script src="bootstrap-treeview/dist/bootstrap-treeview.min.js"></script><!-- DataTables -->
+<link type="text/css" href="datatables/1.13.1/datatables.min.css" rel="stylesheet" />
+<script type="text/javascript" src="datatables/1.13.1/datatables.min.js"></script>
+<script type="text/javascript" src="datatables/1.13.1/time-elapsed-dhms.js"></script>
+
+<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<script src="bootstrap/js/bootstrap.min.js"></script>
+
+
+<script>
+    jQuery.fn.dataTable.ext.type.order['time-elapsed-dhms-pre'] = function(data) {
+
+        var matches = data.match(/^(\d+(?:\.\d+)?)\s*([a-z]+)/i);
+        var multipliers = {
+            ms: 1,
+            s: 1000,
+            m: 60000,
+            h: 3600000,
+            d: 86400000
+        };
+
+        if (matches) {
+            var multiplier = multipliers[matches[2].toLowerCase()];
+            return parseFloat(matches[1]) * multiplier;
+        } else {
+            return -1;
+        };
+    };
+</script>
+<link rel="stylesheet" href="css/core.css"/>
+<link rel="stylesheet" href="css/link.css"/>
+<link type="text/css" media="screen" href="css/screen.css" rel="Stylesheet"/>
+<!--CHART.JS-->
+<script src="chartjs/chart.js"></script>
+<script src="chartjs/chartjs-plugin-datalabels@2.0.0.min.js"></script>
+<script src="chartjs/patternomaly.min.js"></script>
+<script>
+    // Register the plugin to all charts:
+    Chart.register(ChartDataLabels);
+</script>
+<!-- Nivo Slider -->
+<link rel="stylesheet" href="nivo-slider/3.2/nivo-slider.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="nivo-slider/3.2/themes/default/default.css" type="text/css" media="screen" />
+<script src="nivo-slider/3.2/jquery.nivo.slider.pack.js" type="text/javascript"></script>
+
+    <script type="text/javascript">
+
+        function getUrlVars() {
+            var vars = {};
+            var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
+                vars[key] = value;
+            });
+            return vars;
+        }
+
+        var screenshotIndex = getUrlVars()["screenshot"];
+
+        $(window).load(function () {
+            $('#slider').nivoSlider({
+                startSlide: screenshotIndex,
+                effect: 'fade',
+                animSpeed: 200,
+                manualAdvance: true
+            });
+        });
+
+        $(window).keydown(function(e) {
+            switch(e.which) {
+                case 37:
+                    $('a.nivo-prevNav').click();
+                    break;
+                case 39:
+                    $('a.nivo-nextNav').click();
+                    break;
+            }
+        });
+    </script>
+
+</head>
+
+<body>
+<div id="topheader">
+    <div id="topbanner">
+        <div id="logo"><a href="index.html"><img src="images/serenity-logo.png" border="0"/></a></div>
+        <div id="projectname-banner" style="float:right">
+            <span class="projectname">
+                <span class="projecttitle">Serenity BDD Report</span>
+                <span class="projectsubtitle"></span>
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="middlecontent">
+    <div id="contenttop">
+        <div class="middlebg">
+            <span class="breadcrumbs">
+                <a href="index.html">Home</a>
+                > <span class="truncate-40"><a
+                    href="6502f46524e9395e6b86194a1e84294a7090d6f5deda10956dc4a7a14ed251f4.html">Online Shop</a></span>
+                > <span class="truncate-60"><a
+                    href="a435024777d7265b033b184f3e61e09c9c03ad8e363e55e70768789c713d2fee.html">A signed-in customer buys two devices and signs out </a></span>
+                > Screenshots
+            </span>
+        </div>
+        <div class="rightbg"></div>
+    </div>
+
+    <div class="clr"></div>
+
+    <!--/* starts second table*/-->
+<div>
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="active">
+            <a href="#"><i class="bi bi-journal-check"></i> Overall Test Results</a>
+        </li>
+        <li >
+            <a href="capabilities.html"><i class="bi bi-journal-text"></i> Requirements</a>
+        </li>
+        <li >
+            <a href="576946480b52ad056d6f5bddf874399c83582ecf90963cc074a14c70580e7d9f.html"><i class="bi bi-chat-text"></i> Features</a>
+        </li>
+    </ul>
+    <span class="date-and-time"><a href="build-info.html"><i class="bi bi-info-circle"></i></a> Report generated 14-11-2026 22:23</span>
+    <br style="clear:left"/>
+</div>
+
+    <div class="clr"></div>
+
+
+    <div id="contentbody">
+        <div class="titlebar">
+            <div class="story-title">
+                <table class="outcome-header">
+                    <tr>
+                        <td>
+                            <div>
+                                <h3 class="discreet-story-header">
+                                    <i class="fs-2 bi bi-chat-left-quote large-icon"></i>
+                                    <span class="story-header-title">Purchase Of Devices In The Demoblaze Store (PUR-01..PUR-06) </span>
+                                    <span class="badge tag-badge" style="">Feature</span>
+                                </h3>
+
+                                <div class="discreet-requirement-narrative-title">
+                                As a customer I want to buy devices online and get a receipt for my order.<br />
+Flow diagrams: qa/flows/purchase/ · Plan: qa/plans/demoblaze-purchase.md<br />
+The test account comes from the environment (see test-accounts.example.properties), never from this file.
+                                </div>
+                            </div>
+
+                        </td>
+                        <td valign="top" align="right">
+                            <p class="tag">
+                                <span class="badge tag-badge" style="background:default;"
+                                    <i class="bi bi-tag-fill"></i>&nbsp;<a class="tagLink" style="background:default;" href="612d9968525961aca8edfc2756ccd8ec0f3da9f2d707948bf0fbb46a58e8eeb9.html">Positive
+                                </a>
+                                </span>
+                            </p>
+                            <p class="tag">
+                                <span class="badge tag-badge" style="background:default;"
+                                    <i class="bi bi-tag-fill"></i>&nbsp;<a class="tagLink" style="background:default;" href="34658a1663fcf042bd7acb3325affbe4e647c8acd84d0228be2f52e1381e61b9.html">10 To 30 Seconds
+                                        (Duration)
+                                </a>
+                                </span>
+                            </p>
+                            <p class="tag">
+                                <span class="badge tag-badge" style="background:default;"
+                                    <i class="bi bi-tag-fill"></i>&nbsp;<a class="tagLink" style="background:default;" href="5698da923f295f46ce5ab64ced2311fc60caa4e36b32112606d3adcfdce3f60b.html">30 To 60 Seconds
+                                        (Duration)
+                                </a>
+                                </span>
+                            </p>
+                            <p class="tag">
+                                <span class="badge tag-badge" style="background:default;"
+                                    <i class="bi bi-tag-fill"></i>&nbsp;<a class="tagLink" style="background:default;" href="1ade9b8a46e72afebc4ed00d67f771ca8a021917e4c5896398b6ca5b3cf803b0.html">Critical
+                                </a>
+                                </span>
+                            </p>
+                            <p class="tag">
+                                <span class="badge tag-badge" style="background:default;"
+                                    <i class="bi bi-tag-fill"></i>&nbsp;<a class="tagLink" style="background:default;" href="48a39893b09a75a06303a02948586b89173f6eb54912c9438ac5b368a6caaca8.html">TC-03
+                                </a>
+                                </span>
+                            </p>
+                            <p class="tag">
+                                <span class="badge tag-badge" style="background:default;"
+                                    <i class="bi bi-tag-fill"></i>&nbsp;<a class="tagLink" style="background:default;" href="6cda75fa2601093dded40cee439ff4b96e082a0c714aaf341b44c985a3134b83.html">TC-02
+                                </a>
+                                </span>
+                            </p>
+                            <p class="tag">
+                                <span class="badge tag-badge" style="background:default;"
+                                    <i class="bi bi-tag-fill"></i>&nbsp;<a class="tagLink" style="background:default;" href="e060701170b3b865bc23b80d56bdd8ee556fc354bb8338b62bd5f9e948e929e4.html">TC-05
+                                </a>
+                                </span>
+                            </p>
+                            <p class="tag">
+                                <span class="badge tag-badge" style="background:default;"
+                                    <i class="bi bi-tag-fill"></i>&nbsp;<a class="tagLink" style="background:default;" href="420e4b36be8f5e9fd1ca1bfd168a2b1507939b531d0a7da2696203ac9ae0eecc.html">TC-04
+                                </a>
+                                </span>
+                            </p>
+                            <p class="tag">
+                                <span class="badge tag-badge" style="background:default;"
+                                    <i class="bi bi-tag-fill"></i>&nbsp;<a class="tagLink" style="background:default;" href="978bfc6f3b04f1b3b0cca26e91b4e518c1833bdcb0160f93137cbda4dc08d4da.html">Complete Flow
+                                </a>
+                                </span>
+                            </p>
+                            <p class="tag">
+                                <span class="badge tag-badge" style="background:default;"
+                                    <i class="bi bi-tag-fill"></i>&nbsp;<a class="tagLink" style="background:default;" href="516af05ee1cad584ae43483b3123d02d1f5de5ae985fcf629661196123ae89a3.html">Completeflowbp
+                                </a>
+                                </span>
+                            </p>
+                            <p class="tag">
+                                <span class="badge tag-badge" style="background:default;"
+                                    <i class="bi bi-tag-fill"></i>&nbsp;<a class="tagLink" style="background:default;" href="371c662054aabf4f93c4658a377fc0458a64d64097381059e07ac78a24426657.html">BuyDevicesHP DDT
+                                </a>
+                                </span>
+                            </p>
+                            <p class="tag">
+                                <span class="badge tag-badge" style="background:default;"
+                                    <i class="bi bi-tag-fill"></i>&nbsp;<a class="tagLink" style="background:default;" href="7c9387998e59bcae5b782da7f5823964f50d7c19b619077dead01890500cf62a.html">Pur
+                                </a>
+                                </span>
+                            </p>
+                            <p class="tag">
+                                <span class="badge tag-badge" style="background:default;"
+                                    <i class="bi bi-tag-fill"></i>&nbsp;<a class="tagLink" style="background:default;" href="b44fdcac534937cf92f343522dabd717e109a6bdc638fb2f7a96948a0337b6c3.html">TC-01
+                                </a>
+                                </span>
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="story-title">
+                <table class="outcome-header">
+                    <tr>
+                        <td colspan="2" class="test-title-bar">
+                            <span class="outcome-icon"><a href='##beforetable'><i class='bi bi-check-circle-fill success-icon fa-2x' title='SUCCESS'></i></a></span>
+                            <span class="test-case-title">
+                                <span class="success-color">A signed-in customer buys two devices and signs out
+                                    <span class="related-issue-title"></span>
+                                </span>
+                            </span>
+
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="clr"></div>
+
+    <div class="story-title">
+        <h3>Scenario:</h3>
+        <div class="scenario">Given "&lt;name&gt;" opens the store<br>When the customer signs in with the test account<br>And the customer adds two products to the cart<br>Then the cart lists both products and the total is the sum of their prices<br>When the customer places the order with "&lt;name&gt;" "&lt;country&gt;" "&lt;city&gt;" "&lt;card&gt;" "&lt;month&gt;" "&lt;year&gt;"<br>Then the purchase is confirmed for "&lt;name&gt;"<br>And the customer can sign out</div>
+    </div>
+
+    <div id="beforetable"></div>
+    <div id="contenttilttle">
+        <div class="slider-wrapper theme-default">
+            <div id="slider">
+                <img src="6bbf60c53db14ec8a7f1876b49ecb960795a4fdb0d2a7ee231620ab65873a4e6.png" title=" 1: A signed-in customer buys two devices and signs out ({name=Bryan, country=Ecuador, city=Quito, card=123546, month=Agosto, year=2023})" width="0"/>
+                <img src="6bbf60c53db14ec8a7f1876b49ecb960795a4fdb0d2a7ee231620ab65873a4e6.png" title=" Given &quot;Bryan&quot; opens the store" width="0"/>
+                <img src="6bbf60c53db14ec8a7f1876b49ecb960795a4fdb0d2a7ee231620ab65873a4e6.png" title=" Open demoblaze site" width="0"/>
+                <img src="6bbf60c53db14ec8a7f1876b49ecb960795a4fdb0d2a7ee231620ab65873a4e6.png" title=" Bryan opens the browser at https://www.demoblaze.com/" width="0"/>
+                <img src="583224f7e95f6ea2a2553df62d33ddcce2b0304ea9724162a76518242a61cdf8.png" title=" Open demoblaze site (completed)" width="0"/>
+                <img src="583224f7e95f6ea2a2553df62d33ddcce2b0304ea9724162a76518242a61cdf8.png" title=" Given &quot;Bryan&quot; opens the store (completed)" width="0"/>
+                <img src="8caf8d951ca0bb05b5f87497cf9fd5c9fecdf853462282d3de21e9952c2151a2.png" title=" When the customer signs in with the test account" width="0"/>
+                <img src="8caf8d951ca0bb05b5f87497cf9fd5c9fecdf853462282d3de21e9952c2151a2.png" title=" Bryan signs in as bryanfreire123" width="0"/>
+                <img src="8caf8d951ca0bb05b5f87497cf9fd5c9fecdf853462282d3de21e9952c2151a2.png" title=" Bryan enters 'bryanfreire123' into login username" width="0"/>
+                <img src="dfb7b6ad461ebe634a0ff65d430896885fd386ded56e25bdf1b9a026baa8b1ff.png" title=" Bryan signs in as bryanfreire123 (completed)" width="0"/>
+                <img src="17167c8e338c35565cc8fa3514e4bec89aec6cf827ac983167785dc3bc35399e.png" title=" Then Welcome message after sign-in should be 'Welcome bryanfreire123'" width="0"/>
+                <img src="0fddbafccca4574d525bfd4336b7ed6700f79a2d339c4a7a8ee560265090aeb3.png" title=" Bryan empties the cart left by earlier sessions" width="0"/>
+                <img src="6bbf60c53db14ec8a7f1876b49ecb960795a4fdb0d2a7ee231620ab65873a4e6.png" title=" When the customer signs in with the test account (completed)" width="0"/>
+                <img src="89c0c8099c3e90a68211fecf1db3bdc6ade9ad1e4e69738f3ca92db7ab25ef8c.png" title=" And the customer adds two products to the cart" width="0"/>
+                <img src="89c0c8099c3e90a68211fecf1db3bdc6ade9ad1e4e69738f3ca92db7ab25ef8c.png" title=" Add two products to cart" width="0"/>
+                <img src="89c0c8099c3e90a68211fecf1db3bdc6ade9ad1e4e69738f3ca92db7ab25ef8c.png" title=" Bryan accepts the browser alert" width="0"/>
+                <img src="1504b392e0761208436957d5a525c1b2784cbe5d718cef4bafbfa1d8da367856.png" title=" Bryan accepts the browser alert" width="0"/>
+                <img src="6bbf60c53db14ec8a7f1876b49ecb960795a4fdb0d2a7ee231620ab65873a4e6.png" title=" Add two products to cart (completed)" width="0"/>
+                <img src="6bbf60c53db14ec8a7f1876b49ecb960795a4fdb0d2a7ee231620ab65873a4e6.png" title=" And the customer adds two products to the cart (completed)" width="0"/>
+                <img src="030d217b7c8463efa0082c8251699d5a30f7e1a5d7d782d3dff997bfc78d60be.png" title=" Then the cart lists both products and the total is the sum of their prices" width="0"/>
+                <img src="030d217b7c8463efa0082c8251699d5a30f7e1a5d7d782d3dff997bfc78d60be.png" title=" Open shopping cart" width="0"/>
+                <img src="5b7ba3b08c85bfb5d500ad8db97884c99b3278e94c7312fd8d25876fc6dfd224.png" title=" Then Number of products in the cart should be (2)" width="0"/>
+                <img src="5b7ba3b08c85bfb5d500ad8db97884c99b3278e94c7312fd8d25876fc6dfd224.png" title=" Then Cart total equals the sum of the prices should be (1180)" width="0"/>
+                <img src="5b7ba3b08c85bfb5d500ad8db97884c99b3278e94c7312fd8d25876fc6dfd224.png" title=" Then the cart lists both products and the total is the sum of their prices (completed)" width="0"/>
+                <img src="ceef2b57a75bfd5710d397065ba46a704f1434d34a1ca485d01027726ebe56d3.png" title=" When the customer places the order with &quot;Bryan&quot; &quot;Ecuador&quot; &quot;Quito&quot; &quot;123546&quot; &quot;Agosto&quot; &quot;2023&quot;" width="0"/>
+                <img src="ceef2b57a75bfd5710d397065ba46a704f1434d34a1ca485d01027726ebe56d3.png" title=" Open shopping cart" width="0"/>
+                <img src="3689bdd632d4ce40e7e7cd3a3ad58c2bea3a02ec5d2abc7cbf8522935c14e2e0.png" title=" Bryan places the order for Bryan" width="0"/>
+                <img src="3689bdd632d4ce40e7e7cd3a3ad58c2bea3a02ec5d2abc7cbf8522935c14e2e0.png" title=" Bryan enters 'Bryan' into name input" width="0"/>
+                <img src="50a2fa9279f2cd0f64965dbb8f373936d2946cf259b4e6d67875e36939698d12.png" title=" Bryan enters 'Ecuador' into country input" width="0"/>
+                <img src="8b1c0373233a55f7a3ea87d50b960d5337e28b753f00a257d76bbd8d328c4202.png" title=" Bryan enters 'Quito' into city input" width="0"/>
+                <img src="d609534ef6b7a727f4b67c7dcd131157e545e693953a226b0cc1dd7769b2248c.png" title=" Bryan enters '123546' into card input" width="0"/>
+                <img src="225cbe0ce51bd42d4be0ad029f20e410cb7f17ea5c7785a71f1e7df000af63c2.png" title=" Bryan enters 'Agosto' into month input" width="0"/>
+                <img src="fa464267f9a165550822eacc7cdef2cb8a9b95afd73a3a19559f16c40d19b5a1.png" title=" Bryan enters '2023' into year input" width="0"/>
+                <img src="bd7765fdba1f052dcaeb74798c01999cc296ad90f295f052a125f1710f0c0800.png" title=" Bryan places the order for Bryan (completed)" width="0"/>
+                <img src="ca71d5a3ff692c310ff07feac858d312f57c10f078410aabbcdca40ce32d9f02.png" title=" When the customer places the order with &quot;Bryan&quot; &quot;Ecuador&quot; &quot;Quito&quot; &quot;123546&quot; &quot;Agosto&quot; &quot;2023&quot; (completed)" width="0"/>
+                <img src="d675be2cf7a15d54023345aa09ae1e44488a2ce687404a53bb1ca039b3d3e000.png" title=" Then the purchase is confirmed for &quot;Bryan&quot;" width="0"/>
+                <img src="d675be2cf7a15d54023345aa09ae1e44488a2ce687404a53bb1ca039b3d3e000.png" title=" Then Customer name on the receipt should be 'Bryan'" width="0"/>
+                <img src="d675be2cf7a15d54023345aa09ae1e44488a2ce687404a53bb1ca039b3d3e000.png" title=" Then the purchase is confirmed for &quot;Bryan&quot; (completed)" width="0"/>
+                <img src="b2cea41c79091315385b41c00fedbae215a13ffc5be99be8b940eace7054e865.png" title=" And the customer can sign out" width="0"/>
+                <img src="b2cea41c79091315385b41c00fedbae215a13ffc5be99be8b940eace7054e865.png" title=" Close purchase modal and logout" width="0"/>
+                <img src="41f983662387b6e29995da83341ee8dbed3be98b47e9c85e16f3d443897cda00.png" title=" Then 'Log in' link visible after sign-out should be (true)" width="0"/>
+                <img src="41f983662387b6e29995da83341ee8dbed3be98b47e9c85e16f3d443897cda00.png" title=" And the customer can sign out (completed)" width="0"/>
+                <img src="41f983662387b6e29995da83341ee8dbed3be98b47e9c85e16f3d443897cda00.png" title=" 1: A signed-in customer buys two devices and signs out ({name=Bryan, country=Ecuador, city=Quito, card=123546, month=Agosto, year=2023}) (completed)" width="0"/>
+                <img src="6bbf60c53db14ec8a7f1876b49ecb960795a4fdb0d2a7ee231620ab65873a4e6.png" title=" 2: A signed-in customer buys two devices and signs out ({name=Ana, country=Peru, city=Lima, card=987654, month=Septiembre, year=2024})" width="0"/>
+                <img src="6bbf60c53db14ec8a7f1876b49ecb960795a4fdb0d2a7ee231620ab65873a4e6.png" title=" Given &quot;Ana&quot; opens the store" width="0"/>
+                <img src="6bbf60c53db14ec8a7f1876b49ecb960795a4fdb0d2a7ee231620ab65873a4e6.png" title=" Open demoblaze site" width="0"/>
+                <img src="6bbf60c53db14ec8a7f1876b49ecb960795a4fdb0d2a7ee231620ab65873a4e6.png" title=" Ana opens the browser at https://www.demoblaze.com/" width="0"/>
+                <img src="6bbf60c53db14ec8a7f1876b49ecb960795a4fdb0d2a7ee231620ab65873a4e6.png" title=" Open demoblaze site (completed)" width="0"/>
+                <img src="6bbf60c53db14ec8a7f1876b49ecb960795a4fdb0d2a7ee231620ab65873a4e6.png" title=" Given &quot;Ana&quot; opens the store (completed)" width="0"/>
+                <img src="8caf8d951ca0bb05b5f87497cf9fd5c9fecdf853462282d3de21e9952c2151a2.png" title=" When the customer signs in with the test account" width="0"/>
+                <img src="8caf8d951ca0bb05b5f87497cf9fd5c9fecdf853462282d3de21e9952c2151a2.png" title=" Ana signs in as bryanfreire123" width="0"/>
+                <img src="8caf8d951ca0bb05b5f87497cf9fd5c9fecdf853462282d3de21e9952c2151a2.png" title=" Ana enters 'bryanfreire123' into login username" width="0"/>
+                <img src="7b06bd4ca7cddaf8307bc452a95cadd2c60a17ac14568b088885862871b5caa0.png" title=" Ana signs in as bryanfreire123 (completed)" width="0"/>
+                <img src="17167c8e338c35565cc8fa3514e4bec89aec6cf827ac983167785dc3bc35399e.png" title=" Then Welcome message after sign-in should be 'Welcome bryanfreire123'" width="0"/>
+                <img src="0fddbafccca4574d525bfd4336b7ed6700f79a2d339c4a7a8ee560265090aeb3.png" title=" Ana empties the cart left by earlier sessions" width="0"/>
+                <img src="6bbf60c53db14ec8a7f1876b49ecb960795a4fdb0d2a7ee231620ab65873a4e6.png" title=" When the customer signs in with the test account (completed)" width="0"/>
+                <img src="89c0c8099c3e90a68211fecf1db3bdc6ade9ad1e4e69738f3ca92db7ab25ef8c.png" title=" And the customer adds two products to the cart" width="0"/>
+                <img src="89c0c8099c3e90a68211fecf1db3bdc6ade9ad1e4e69738f3ca92db7ab25ef8c.png" title=" Add two products to cart" width="0"/>
+                <img src="89c0c8099c3e90a68211fecf1db3bdc6ade9ad1e4e69738f3ca92db7ab25ef8c.png" title=" Ana accepts the browser alert" width="0"/>
+                <img src="1504b392e0761208436957d5a525c1b2784cbe5d718cef4bafbfa1d8da367856.png" title=" Ana accepts the browser alert" width="0"/>
+                <img src="6bbf60c53db14ec8a7f1876b49ecb960795a4fdb0d2a7ee231620ab65873a4e6.png" title=" Add two products to cart (completed)" width="0"/>
+                <img src="6bbf60c53db14ec8a7f1876b49ecb960795a4fdb0d2a7ee231620ab65873a4e6.png" title=" And the customer adds two products to the cart (completed)" width="0"/>
+                <img src="030d217b7c8463efa0082c8251699d5a30f7e1a5d7d782d3dff997bfc78d60be.png" title=" Then the cart lists both products and the total is the sum of their prices" width="0"/>
+                <img src="030d217b7c8463efa0082c8251699d5a30f7e1a5d7d782d3dff997bfc78d60be.png" title=" Open shopping cart" width="0"/>
+                <img src="858d8a2b998fc09d0ebfbb591ad6ee4a289663bc937ff0121a05e3af6ac4dbec.png" title=" Then Number of products in the cart should be (2)" width="0"/>
+                <img src="858d8a2b998fc09d0ebfbb591ad6ee4a289663bc937ff0121a05e3af6ac4dbec.png" title=" Then Cart total equals the sum of the prices should be (1180)" width="0"/>
+                <img src="858d8a2b998fc09d0ebfbb591ad6ee4a289663bc937ff0121a05e3af6ac4dbec.png" title=" Then the cart lists both products and the total is the sum of their prices (completed)" width="0"/>
+                <img src="40fe9ea0e198bc28a498fd042fdea422105b9fc621f1b90fd3c8f9ca69fa53d4.png" title=" When the customer places the order with &quot;Ana&quot; &quot;Peru&quot; &quot;Lima&quot; &quot;987654&quot; &quot;Septiembre&quot; &quot;2024&quot;" width="0"/>
+                <img src="40fe9ea0e198bc28a498fd042fdea422105b9fc621f1b90fd3c8f9ca69fa53d4.png" title=" Open shopping cart" width="0"/>
+                <img src="a8830bab9923cecb5293ccebbc4b4e3e0dd6cd40dfac96882c8c004d538e5bdc.png" title=" Ana places the order for Ana" width="0"/>
+                <img src="a8830bab9923cecb5293ccebbc4b4e3e0dd6cd40dfac96882c8c004d538e5bdc.png" title=" Ana enters 'Ana' into name input" width="0"/>
+                <img src="3654166793a5802b22bc98e7784315fa6fd5a3983f8df5ab2a3362cde42cacfd.png" title=" Ana enters 'Peru' into country input" width="0"/>
+                <img src="5efa8ed5a9622773f88251502d2a8120063be6cdcc099b592a2e655dd5583d6e.png" title=" Ana enters 'Lima' into city input" width="0"/>
+                <img src="9e0f614af2823470fa259f168ebca20a99afc998c24067f8e8179636e1e7c001.png" title=" Ana enters '987654' into card input" width="0"/>
+                <img src="0c3a9de1e5b9c44025145a5e882c1bbe4fdb9883f9bb3a99e034e75686a91c30.png" title=" Ana enters 'Septiembre' into month input" width="0"/>
+                <img src="10742f8e837ba27cd739ce1e0e0256a13518cb19b399f3e6132cba113ad91712.png" title=" Ana enters '2024' into year input" width="0"/>
+                <img src="0ca45bbd57bffeb0c38f081589a506ae8da86b85596f66e0e8956a0190f7965b.png" title=" Ana places the order for Ana (completed)" width="0"/>
+                <img src="56efee0e3202aefdc47aed66473ddb163044dbb0ac1786c42f5ed94386d3088c.png" title=" When the customer places the order with &quot;Ana&quot; &quot;Peru&quot; &quot;Lima&quot; &quot;987654&quot; &quot;Septiembre&quot; &quot;2024&quot; (completed)" width="0"/>
+                <img src="312ae28a0caf6d2417f6f5854af722db107a332d8c2b85bb735b29de3e1e34a4.png" title=" Then the purchase is confirmed for &quot;Ana&quot;" width="0"/>
+                <img src="312ae28a0caf6d2417f6f5854af722db107a332d8c2b85bb735b29de3e1e34a4.png" title=" Then Customer name on the receipt should be 'Ana'" width="0"/>
+                <img src="312ae28a0caf6d2417f6f5854af722db107a332d8c2b85bb735b29de3e1e34a4.png" title=" Then the purchase is confirmed for &quot;Ana&quot; (completed)" width="0"/>
+                <img src="6bbf60c53db14ec8a7f1876b49ecb960795a4fdb0d2a7ee231620ab65873a4e6.png" title=" And the customer can sign out" width="0"/>
+                <img src="6bbf60c53db14ec8a7f1876b49ecb960795a4fdb0d2a7ee231620ab65873a4e6.png" title=" Close purchase modal and logout" width="0"/>
+                <img src="583224f7e95f6ea2a2553df62d33ddcce2b0304ea9724162a76518242a61cdf8.png" title=" Then 'Log in' link visible after sign-out should be (true)" width="0"/>
+                <img src="583224f7e95f6ea2a2553df62d33ddcce2b0304ea9724162a76518242a61cdf8.png" title=" And the customer can sign out (completed)" width="0"/>
+
+                <img src="583224f7e95f6ea2a2553df62d33ddcce2b0304ea9724162a76518242a61cdf8.png" title=" 2: A signed-in customer buys two devices and signs out ({name=Ana, country=Peru, city=Lima, card=987654, month=Septiembre, year=2024}) (completed): <span class='success-color'>SUCCESS</span>" width="0"/>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+<div id="beforefooter"></div>
+<div id="bottomfooter">
+    <span class="version">Serenity BDD version 4.1.14</span>
+</div>
+</body>
+</html>
