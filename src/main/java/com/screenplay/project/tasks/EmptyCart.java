@@ -8,7 +8,6 @@ import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.Interaction;
 import net.serenitybdd.screenplay.abilities.BrowseTheWeb;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -32,9 +31,6 @@ public class EmptyCart implements Interaction {
     private static final By ROWS = By.cssSelector(PageCar.CART_ROWS_CSS);
     /** Upper bound so a cart that never empties fails instead of looping forever. */
     private static final int MAX_DELETES = 50;
-    /** True once the page is loaded and jQuery (used by Demoblaze for every call) has no request in progress. */
-    private static final String PAGE_IDLE = "return document.readyState === 'complete'"
-            + " && (!window.jQuery || window.jQuery.active === 0);";
 
     public static EmptyCart first() {
         return new EmptyCart();
@@ -53,7 +49,7 @@ public class EmptyCart implements Interaction {
             actor.attemptsTo(ClickWhenReady.on(PageCar.BTN_DELETE_PRODUCT));
             int expected = left - 1;
             waitFor(driver, "the cart to show " + expected + " product(s) after a delete",
-                    d -> isIdle(d) && d.findElements(ROWS).size() == expected);
+                    d -> WaitForPageLoad.isIdle(d) && d.findElements(ROWS).size() == expected);
             removed++;
             left = expected == 0 ? loadCart(driver) : expected;
         }
@@ -65,13 +61,10 @@ public class EmptyCart implements Interaction {
     /** Opens the cart page, waits until its AJAX calls finish and returns the number of rows. */
     private static int loadCart(WebDriver driver) {
         driver.navigate().to(PageCar.CART_URL);
-        waitFor(driver, "the cart page to finish loading", EmptyCart::isIdle);
+        waitFor(driver, "the cart page to finish loading", WaitForPageLoad::isIdle);
         return driver.findElements(ROWS).size();
     }
 
-    private static boolean isIdle(WebDriver driver) {
-        return Boolean.TRUE.equals(((JavascriptExecutor) driver).executeScript(PAGE_IDLE));
-    }
 
     private static void waitFor(WebDriver driver, String condition, Function<WebDriver, Boolean> check) {
         new WebDriverWait(driver, Timeouts.SERVER).withMessage(condition).until(check::apply);
