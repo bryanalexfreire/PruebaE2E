@@ -5,7 +5,7 @@
 - [ ] Scenarios / features
 - [ ] Screenplay code (Targets, Tasks, Questions, models)
 - [ ] Test data
-- [ ] Agents / skills / qa docs
+- [ ] QA docs (requirements, plans, flows)
 - [ ] CI / tooling
 
 ## Traceability
