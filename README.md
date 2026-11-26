@@ -1,4 +1,4 @@
-# PruebaE2E — E2E Automation for Demoblaze
+# Serenity E2E Automation for Demoblaze
 
 End-to-end functional automation of the purchase flow on [https://www.demoblaze.com](https://www.demoblaze.com) with **Serenity BDD + Screenplay + Cucumber + JUnit 4**:
 sign in → add two products → review the cart (products and total) → fill in the purchase form → confirm the order → sign out.
@@ -35,8 +35,7 @@ Actor ── attemptsTo(Task) ── Interaction(s) ── Target (locator)
 ## 3. Project structure
 
 ```text
-PruebaE2E/
-├── AGENTS.md · .agents/ · link-agents.bat   testing agents and skills (see section 8)
+serenity-screenplay-e2e/
 ├── qa/                                       requirements, plan, flow diagrams, sessions
 ├── reports/                                  published runs: Serenity report + summary (index, LATEST, one folder per run)
 ├── src/main/java/com/screenplay/project/     ui · tasks · questions · model · util (config, data, evidence, logger, timeouts)
@@ -155,14 +154,9 @@ Each report has one role, so nothing is duplicated:
 - Each run: summary on the job page, JUnit results in the checks tab, Serenity report (evidence) and raw results as an artifact. Known defects (`@bug`) are excluded by default; run them with *Run workflow* and tags `@bug` (reported as known bugs, they do not fail the build).
 - Manual run with custom tags: *Actions → CI → Run workflow*.
 
-## 10. Testing agents, plan and flow diagrams
+## 10. Plan and flow diagrams
 
 - `qa/requirements/` (PUR-01..06), `qa/plans/demoblaze-purchase.md` (test conditions) and `qa/flows/purchase/` (Mermaid diagram per test case, plus the journey). Scenario tags `@TC-XX` link each result to its diagram.
-- `AGENTS.md` and `.agents/` hold vendor-neutral agents (test-planner, charter-explorer, bug-verifier, test-generator, test-healer, report-reviewer) and skills (risk analysis, exploratory testing, bug report, Serenity automation, summary report). Connect them to your agent client once per machine:
-  ```bat
-  link-agents.bat <client-folder> <client-rules-file>
-  ```
-  It creates local links and excludes them from Git (`.git/info/exclude`).
 
 ## 11. Prerequisites
 
